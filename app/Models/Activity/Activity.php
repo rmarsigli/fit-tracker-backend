@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Models\Activity;
 
@@ -66,5 +68,48 @@ class Activity extends Model
     public function segmentEfforts(): HasMany
     {
         return $this->hasMany(SegmentEffort::class);
+    }
+
+    public function calculateAverageSpeed(): ?float
+    {
+        if (! $this->distance_meters || ! $this->moving_time_seconds) {
+            return null;
+        }
+
+        return ($this->distance_meters / 1000) / ($this->moving_time_seconds / 3600);
+    }
+
+    public function calculateAveragePace(): ?float
+    {
+        $avgSpeed = $this->calculateAverageSpeed();
+
+        if (! $avgSpeed || $avgSpeed <= 0) {
+            return null;
+        }
+
+        return 60 / $avgSpeed;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->completed_at !== null;
+    }
+
+    public function getDurationInMinutes(): ?int
+    {
+        if (! $this->duration_seconds) {
+            return null;
+        }
+
+        return (int) ceil($this->duration_seconds / 60);
+    }
+
+    public function getDistanceInKm(): ?float
+    {
+        if (! $this->distance_meters) {
+            return null;
+        }
+
+        return round($this->distance_meters / 1000, 2);
     }
 }

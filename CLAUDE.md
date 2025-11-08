@@ -353,21 +353,47 @@ $pages->assertNoJavascriptErrors()->assertNoConsoleLogs();
 | decoration-clone | box-decoration-clone |
 
 
+=== tests rules ===
+
+## Test Enforcement
+
+- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
+- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test` with a specific filename or filter.
+
+
 === .ai/best-pratices rules ===
 
 # CODING BEST PRACTICES GUIDELINE
 
-- Strong typing code, with PHPStan (`larastan/larastan`) level 5
+Those guidelines are **NOT NEGOTIABLE**, you **MUST follow them**.
+
+## WRITTING COMMENTS
+
 - **DO NOT** inline comments anywhere (`// this is an inline comment example`)
-- Start PHP files with <?php declare(strict_types=1); in line 1. Only don't do this when you really can't
 - PHPDocs comments only in important places
 - When you write something, always write in english
+
+## API
+- API must use validations and json resources
+
+## MIGRATION
+
+- In environment local, priorize `php artisan migrate:fresh --seed` with current migration files over creating migration files to update already created tables `php artisan migrate`
+- **DO NOT** use the function `down()` in any migrations
+
+## STRICT TYPES
+
 - Use Enums (in ./app/Enums), `spatie/laravel-data` (in ./app/Data) package and ValueObjects (in ./app/ValueObjects) for types
-- API must follow the best Laravel practices. Not just using strong type, use validations and json resources
+- Strong typing code, with PHPStan (`larastan/larastan`) level 5
+- **CRITICAL**: ALL PHP files MUST start with ` <?php declare(strict_types=1); ` on LINE 1 **(all in one line)**.
+- NEVER use separate lines for ` <?php declare(strict_types=1); `
+- This is NON-NEGOTIABLE for all PHP files (models, controllers, migrations, tests, etc.)
+
+## FILE ORGANIZATION
+
 - Use "Smart Files Organization", this is group multiple classes by files, example:
 - `./app/Models/Post/Post.php`, `./app/Models/Post/PostCategory.php`, `./app/Models/Post/PostUser.php` are in the same folder, because they are related
 - `./app/ValueObjects/Championship/StandingsRow.php`, `./app/ValueObjects/Championship/NarrativeConfig.php`, `./app/ValueObjects/Championship/MatchOdds.php` and `./app/ValueObjects/Championship/Score.php` - the same applies here!
-- In environment local, priorize `php artisan migrate:fresh --seed` with current migration files over creating migration files to update already created tables `php artisan migrate`
 
 
 === .ai/sprint-guidelines rules ===
