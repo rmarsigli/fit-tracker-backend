@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace App\Http\Resources\Api\v1\Segment;
+declare(strict_types=1);
+
+namespace App\Http\Resources\Activity;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class SegmentCollection extends ResourceCollection
+class ActivityCollection extends ResourceCollection
 {
     public function toArray(Request $request): array
     {

@@ -1,12 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Activity;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\v1\Activity\StoreActivityRequest;
-use App\Http\Requests\Api\v1\Activity\UpdateActivityRequest;
-use App\Http\Resources\Api\v1\Activity\ActivityCollection;
-use App\Http\Resources\Api\v1\Activity\ActivityResource;
+use App\Http\Requests\Activity\StoreActivityRequest;
+use App\Http\Requests\Activity\UpdateActivityRequest;
+use App\Http\Resources\Activity\ActivityCollection;
+use App\Http\Resources\Activity\ActivityResource;
 use App\Models\Activity\Activity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

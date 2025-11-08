@@ -1,0 +1,691 @@
+{
+  "info": {
+    "name": "FitTrack BR API",
+    "description": "Complete API collection for FitTrack BR - A fitness tracking platform with GPS tracking, segments, and social features.",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@example.com\",\n  \"username\": \"joaosilva\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Create a new user account. Token is automatically saved to collection variables."
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate user and receive access token."
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Get authenticated user information."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Revoke current access token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activities",
+      "item": [
+        {
+          "name": "List User Activities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities",
+              "host": ["{{base_url}}"],
+              "path": ["activities"]
+            },
+            "description": "Get all activities for authenticated user."
+          }
+        },
+        {
+          "name": "Create Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"run\",\n  \"title\": \"Morning Run\",\n  \"description\": \"Easy recovery run in the park\",\n  \"distance_meters\": 5000,\n  \"duration_seconds\": 1800,\n  \"moving_time_seconds\": 1750,\n  \"elevation_gain\": 50,\n  \"elevation_loss\": 45,\n  \"avg_speed_kmh\": 10.0,\n  \"max_speed_kmh\": 14.5,\n  \"avg_heart_rate\": 145,\n  \"max_heart_rate\": 165,\n  \"calories\": 350,\n  \"avg_cadence\": 170,\n  \"visibility\": \"public\",\n  \"started_at\": \"2025-11-08T06:00:00Z\",\n  \"completed_at\": \"2025-11-08T06:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/activities",
+              "host": ["{{base_url}}"],
+              "path": ["activities"]
+            },
+            "description": "Create a new activity with stats."
+          }
+        },
+        {
+          "name": "Show Activity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/1",
+              "host": ["{{base_url}}"],
+              "path": ["activities", "1"]
+            },
+            "description": "Get a single activity by ID."
+          }
+        },
+        {
+          "name": "Update Activity",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Morning Run\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/activities/1",
+              "host": ["{{base_url}}"],
+              "path": ["activities", "1"]
+            },
+            "description": "Update an existing activity."
+          }
+        },
+        {
+          "name": "Delete Activity",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/1",
+              "host": ["{{base_url}}"],
+              "path": ["activities", "1"]
+            },
+            "description": "Delete an activity."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activity Tracking",
+      "item": [
+        {
+          "name": "Start Tracking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('tracking_id', jsonData.activity_id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"run\",\n  \"title\": \"Morning Run\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tracking/start",
+              "host": ["{{base_url}}"],
+              "path": ["tracking", "start"]
+            },
+            "description": "Start a new tracking session. Tracking ID is saved automatically."
+          }
+        },
+        {
+          "name": "Track Location",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"altitude\": 760,\n  \"heart_rate\": 145\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tracking/{{tracking_id}}/track",
+              "host": ["{{base_url}}"],
+              "path": ["tracking", "{{tracking_id}}", "track"]
+            },
+            "description": "Add GPS point to current tracking session."
+          }
+        },
+        {
+          "name": "Pause Tracking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tracking/{{tracking_id}}/pause",
+              "host": ["{{base_url}}"],
+              "path": ["tracking", "{{tracking_id}}", "pause"]
+            },
+            "description": "Pause current tracking session."
+          }
+        },
+        {
+          "name": "Resume Tracking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tracking/{{tracking_id}}/resume",
+              "host": ["{{base_url}}"],
+              "path": ["tracking", "{{tracking_id}}", "resume"]
+            },
+            "description": "Resume paused tracking session."
+          }
+        },
+        {
+          "name": "Get Tracking Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tracking/{{tracking_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["tracking", "{{tracking_id}}", "status"]
+            },
+            "description": "Get current tracking session status."
+          }
+        },
+        {
+          "name": "Finish Tracking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tracking/{{tracking_id}}/finish",
+              "host": ["{{base_url}}"],
+              "path": ["tracking", "{{tracking_id}}", "finish"]
+            },
+            "description": "Finish tracking and save activity to database."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Statistics",
+      "item": [
+        {
+          "name": "User Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/statistics/me",
+              "host": ["{{base_url}}"],
+              "path": ["statistics", "me"]
+            },
+            "description": "Get aggregated statistics for authenticated user."
+          }
+        },
+        {
+          "name": "Activity Feed",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/statistics/feed?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["statistics", "feed"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Number of activities (max 100)"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ]
+            },
+            "description": "Get public activities feed."
+          }
+        },
+        {
+          "name": "Activity Splits",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/statistics/activities/1/splits",
+              "host": ["{{base_url}}"],
+              "path": ["statistics", "activities", "1", "splits"]
+            },
+            "description": "Get per-kilometer splits for activity."
+          }
+        },
+        {
+          "name": "Activity Pace Zones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/statistics/activities/1/pace-zones",
+              "host": ["{{base_url}}"],
+              "path": ["statistics", "activities", "1", "pace-zones"]
+            },
+            "description": "Get pace zone distribution for activity."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Segments",
+      "item": [
+        {
+          "name": "List Segments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/segments",
+              "host": ["{{base_url}}"],
+              "path": ["segments"]
+            },
+            "description": "Get all segments."
+          }
+        },
+        {
+          "name": "List Segments by Type",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/segments?type=run",
+              "host": ["{{base_url}}"],
+              "path": ["segments"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "run",
+                  "description": "Filter by type (run, ride)"
+                }
+              ]
+            },
+            "description": "Get segments filtered by type."
+          }
+        },
+        {
+          "name": "List Segments by Creator",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/segments?creator_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["segments"],
+              "query": [
+                {
+                  "key": "creator_id",
+                  "value": "1",
+                  "description": "Filter by creator user ID"
+                }
+              ]
+            },
+            "description": "Get segments created by specific user."
+          }
+        },
+        {
+          "name": "Create Segment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ibirapuera Loop\",\n  \"description\": \"Full loop around Ibirapuera Park\",\n  \"type\": \"run\",\n  \"distance_meters\": 3850,\n  \"avg_grade_percent\": 0.5,\n  \"max_grade_percent\": 2.1,\n  \"elevation_gain\": 15,\n  \"city\": \"São Paulo\",\n  \"state\": \"SP\",\n  \"is_hazardous\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/segments",
+              "host": ["{{base_url}}"],
+              "path": ["segments"]
+            },
+            "description": "Create a new segment."
+          }
+        },
+        {
+          "name": "Show Segment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/segments/1",
+              "host": ["{{base_url}}"],
+              "path": ["segments", "1"]
+            },
+            "description": "Get a single segment by ID."
+          }
+        },
+        {
+          "name": "Update Segment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Segment Name\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/segments/1",
+              "host": ["{{base_url}}"],
+              "path": ["segments", "1"]
+            },
+            "description": "Update existing segment (creator only)."
+          }
+        },
+        {
+          "name": "Delete Segment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/segments/1",
+              "host": ["{{base_url}}"],
+              "path": ["segments", "1"]
+            },
+            "description": "Delete segment (creator only)."
+          }
+        },
+        {
+          "name": "Find Nearby Segments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/segments/nearby?latitude=-23.5505&longitude=-46.6333&radius=10",
+              "host": ["{{base_url}}"],
+              "path": ["segments", "nearby"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "-23.5505",
+                  "description": "Latitude (-90 to 90)"
+                },
+                {
+                  "key": "longitude",
+                  "value": "-46.6333",
+                  "description": "Longitude (-180 to 180)"
+                },
+                {
+                  "key": "radius",
+                  "value": "10",
+                  "description": "Search radius in kilometers (default: 10)"
+                }
+              ]
+            },
+            "description": "Find segments near coordinates."
+          }
+        }
+      ]
+    }
+  ]
+}

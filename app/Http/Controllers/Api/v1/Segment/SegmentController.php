@@ -1,12 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Segment;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\v1\Segment\StoreSegmentRequest;
-use App\Http\Requests\Api\v1\Segment\UpdateSegmentRequest;
-use App\Http\Resources\Api\v1\Segment\SegmentCollection;
-use App\Http\Resources\Api\v1\Segment\SegmentResource;
+use App\Http\Requests\Segment\StoreSegmentRequest;
+use App\Http\Requests\Segment\UpdateSegmentRequest;
+use App\Http\Resources\Segment\SegmentCollection;
+use App\Http\Resources\Segment\SegmentResource;
 use App\Models\Segment\Segment;
 use App\Services\PostGIS\GeoQueryService;
 use Illuminate\Http\JsonResponse;

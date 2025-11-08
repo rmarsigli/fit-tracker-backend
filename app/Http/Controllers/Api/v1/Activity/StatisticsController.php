@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Activity;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\v1\Activity\ActivityResource;
+use App\Http\Resources\Activity\ActivityResource;
 use App\Models\Activity\Activity;
 use App\Services\Activity\StatisticsService;
 use Illuminate\Http\JsonResponse;

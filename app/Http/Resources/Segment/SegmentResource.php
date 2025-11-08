@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace App\Http\Resources\Api\v1\Segment;
+declare(strict_types=1);
 
-use App\Http\Resources\Api\v1\UserResource;
+namespace App\Http\Resources\Segment;
+
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

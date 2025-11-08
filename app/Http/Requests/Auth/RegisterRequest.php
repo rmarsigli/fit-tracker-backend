@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace App\Http\Requests\Api\v1\Auth;
+declare(strict_types=1);
+
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
