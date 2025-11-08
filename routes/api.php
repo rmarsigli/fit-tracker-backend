@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Activity\ActivityController;
 use App\Http\Controllers\Api\V1\Activity\ActivityTrackingController;
+use App\Http\Controllers\Api\V1\Activity\StatisticsController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,13 @@ Route::prefix('v1')->group(function () {
             Route::post('{activityId}/resume', [ActivityTrackingController::class, 'resume']);
             Route::post('{activityId}/finish', [ActivityTrackingController::class, 'finish']);
             Route::get('{activityId}/status', [ActivityTrackingController::class, 'status']);
+        });
+
+        Route::prefix('statistics')->group(function () {
+            Route::get('me', [StatisticsController::class, 'userStats']);
+            Route::get('feed', [StatisticsController::class, 'activityFeed']);
+            Route::get('activities/{activity}/splits', [StatisticsController::class, 'activitySplits']);
+            Route::get('activities/{activity}/pace-zones', [StatisticsController::class, 'activityPaceZones']);
         });
     });
 });
