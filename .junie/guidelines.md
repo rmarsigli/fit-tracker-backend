@@ -367,6 +367,7 @@ $pages->assertNoJavascriptErrors()->assertNoConsoleLogs();
 - Use "Smart Files Organization", this is group multiple classes by files, example:
 - `./app/Models/Post/Post.php`, `./app/Models/Post/PostCategory.php`, `./app/Models/Post/PostUser.php` are in the same folder, because they are related
 - `./app/ValueObjects/Championship/StandingsRow.php`, `./app/ValueObjects/Championship/NarrativeConfig.php`, `./app/ValueObjects/Championship/MatchOdds.php` and `./app/ValueObjects/Championship/Score.php` - the same applies here!
+- In environment local, priorize `php artisan migrate:fresh --seed` with current migration files over creating migration files to update already created tables `php artisan migrate`
 
 
 === .ai/sprint-guidelines rules ===
