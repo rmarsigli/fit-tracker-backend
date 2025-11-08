@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Activity\ActivityController;
 use App\Http\Controllers\Api\V1\Activity\ActivityTrackingController;
 use App\Http\Controllers\Api\V1\Activity\StatisticsController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Segment\SegmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -21,6 +22,9 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('activities', ActivityController::class);
+
+        Route::get('segments/nearby', [SegmentController::class, 'nearby']);
+        Route::apiResource('segments', SegmentController::class);
 
         Route::prefix('tracking')->group(function () {
             Route::post('start', [ActivityTrackingController::class, 'start']);
