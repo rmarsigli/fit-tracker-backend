@@ -1,12 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-use App\Http\Controllers\Api\V1\Activity\ActivityController;
-use App\Http\Controllers\Api\V1\Activity\ActivityTrackingController;
-use App\Http\Controllers\Api\V1\Activity\StatisticsController;
-use App\Http\Controllers\Api\V1\Auth\AuthController;
-use App\Http\Controllers\Api\V1\Segment\SegmentController;
+use App\Http\Controllers\Api\v1\Activity\ActivityController;
+use App\Http\Controllers\Api\v1\Activity\ActivityTrackingController;
+use App\Http\Controllers\Api\v1\Activity\StatisticsController;
+use App\Http\Controllers\Api\v1\Auth\AuthController;
+use App\Http\Controllers\Api\v1\Segment\SegmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
