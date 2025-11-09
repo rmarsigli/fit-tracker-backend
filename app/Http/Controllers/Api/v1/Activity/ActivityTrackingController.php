@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Activity;
 
@@ -11,12 +13,23 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+/**
+ * @group Activity Tracking
+ *
+ * Real-time GPS activity tracking endpoints for recording runs, rides, and workouts.
+ * Activities are stored in Redis during tracking and saved to the database when finished.
+ */
 class ActivityTrackingController extends Controller
 {
     public function __construct(
         private readonly ActivityTrackingService $trackingService
     ) {}
 
+    /**
+     * Start tracking activity
+     *
+     * Begin a new activity tracking session. Returns an activity_id to use for subsequent tracking calls.
+     */
     public function start(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -36,6 +49,11 @@ class ActivityTrackingController extends Controller
         ], 201);
     }
 
+    /**
+     * Track GPS location
+     *
+     * Record a GPS point for an active tracking session. Call this endpoint repeatedly as the user moves.
+     */
     public function track(Request $request, string $activityId): JsonResponse
     {
         $validated = $request->validate([
@@ -64,6 +82,11 @@ class ActivityTrackingController extends Controller
         ]);
     }
 
+    /**
+     * Pause activity tracking
+     *
+     * Pause the current activity. Paused time will not be counted in moving time.
+     */
     public function pause(string $activityId): JsonResponse
     {
         $success = $this->trackingService->pauseActivity($activityId);
@@ -79,6 +102,11 @@ class ActivityTrackingController extends Controller
         ]);
     }
 
+    /**
+     * Resume activity tracking
+     *
+     * Resume a paused activity to continue tracking.
+     */
     public function resume(string $activityId): JsonResponse
     {
         $success = $this->trackingService->resumeActivity($activityId);
@@ -94,6 +122,11 @@ class ActivityTrackingController extends Controller
         ]);
     }
 
+    /**
+     * Finish activity tracking
+     *
+     * Complete the activity and save it to the database. Calculates all statistics and triggers segment matching.
+     */
     public function finish(Request $request, string $activityId): JsonResponse
     {
         $validated = $request->validate([
@@ -121,6 +154,11 @@ class ActivityTrackingController extends Controller
         ]);
     }
 
+    /**
+     * Get tracking status
+     *
+     * Get the current status of an active tracking session.
+     */
     public function status(string $activityId): JsonResponse
     {
         $data = $this->trackingService->getTrackingData($activityId);

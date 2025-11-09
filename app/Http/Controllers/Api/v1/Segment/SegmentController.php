@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Segment;
 
@@ -12,12 +14,22 @@ use App\Services\PostGIS\GeoQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Segments
+ *
+ * Segments are popular routes or portions of routes where athletes can compete for best times and rankings.
+ */
 class SegmentController extends Controller
 {
     public function __construct(
         protected GeoQueryService $geoQuery
     ) {}
 
+    /**
+     * List segments
+     *
+     * Get a paginated list of segments with optional filtering by type or creator.
+     */
     public function index(Request $request): SegmentCollection
     {
         $query = Segment::query()->with('creator');
@@ -39,6 +51,11 @@ class SegmentController extends Controller
         return new SegmentCollection($segments);
     }
 
+    /**
+     * Create segment
+     *
+     * Create a new segment from a GPS route.
+     */
     public function store(StoreSegmentRequest $request): JsonResponse
     {
         $segment = Segment::create([
@@ -54,6 +71,11 @@ class SegmentController extends Controller
         ], 201);
     }
 
+    /**
+     * Get segment
+     *
+     * Retrieve segment details including leaderboard information.
+     */
     public function show(Segment $segment): JsonResponse
     {
         $segment->load('creator');
@@ -63,6 +85,11 @@ class SegmentController extends Controller
         ]);
     }
 
+    /**
+     * Update segment
+     *
+     * Update segment details. Only the creator can update a segment.
+     */
     public function update(UpdateSegmentRequest $request, Segment $segment): JsonResponse
     {
         $this->authorize('update', $segment);
@@ -76,6 +103,11 @@ class SegmentController extends Controller
         ]);
     }
 
+    /**
+     * Delete segment
+     *
+     * Permanently delete a segment. Only the creator can delete a segment.
+     */
     public function destroy(Request $request, Segment $segment): JsonResponse
     {
         $this->authorize('delete', $segment);
@@ -87,6 +119,11 @@ class SegmentController extends Controller
         ]);
     }
 
+    /**
+     * Find nearby segments
+     *
+     * Search for segments near a specific GPS coordinate within a given radius.
+     */
     public function nearby(Request $request): JsonResponse
     {
         $request->validate([

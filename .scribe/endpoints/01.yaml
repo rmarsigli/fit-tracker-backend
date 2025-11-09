@@ -1,0 +1,685 @@
+name: Activities
+description: |-
+
+  Manage completed activities. Activities are GPS-tracked workouts with statistics like distance, pace, and elevation.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/activities
+    metadata:
+      custom: []
+      groupName: Activities
+      groupDescription: |-
+
+        Manage completed activities. Activities are GPS-tracked workouts with statistics like distance, pace, and elevation.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List activities'
+      description: "Get a paginated list of the authenticated user's activities."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_BEARER_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/activities
+    metadata:
+      custom: []
+      groupName: Activities
+      groupDescription: |-
+
+        Manage completed activities. Activities are GPS-tracked workouts with statistics like distance, pace, and elevation.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create activity'
+      description: 'Manually create a new activity (alternative to using the tracking endpoints).'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_BEARER_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      type:
+        custom: []
+        name: type
+        description: ''
+        required: true
+        example: architecto
+        type: string
+        enumValues:
+          - run
+          - ride
+          - walk
+          - swim
+          - gym
+          - other
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title:
+        custom: []
+        name: title
+        description: validation.max.
+        required: true
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      description:
+        custom: []
+        name: description
+        description: validation.max.
+        required: false
+        example: 'Animi quos velit et fugiat.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      visibility:
+        custom: []
+        name: visibility
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues:
+          - public
+          - followers
+          - private
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      started_at:
+        custom: []
+        name: started_at
+        description: validation.date.
+        required: true
+        example: '2025-11-09T02:30:52'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      completed_at:
+        custom: []
+        name: completed_at
+        description: 'validation.date validation.after.'
+        required: false
+        example: '2051-12-03'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      distance_meters:
+        custom: []
+        name: distance_meters
+        description: validation.min.
+        required: false
+        example: 39
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      duration_seconds:
+        custom: []
+        name: duration_seconds
+        description: validation.min.
+        required: false
+        example: 84
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      moving_time_seconds:
+        custom: []
+        name: moving_time_seconds
+        description: validation.min.
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      elevation_gain:
+        custom: []
+        name: elevation_gain
+        description: validation.min.
+        required: false
+        example: 77
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      elevation_loss:
+        custom: []
+        name: elevation_loss
+        description: validation.min.
+        required: false
+        example: 8
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avg_speed_kmh:
+        custom: []
+        name: avg_speed_kmh
+        description: validation.min.
+        required: false
+        example: 76
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      max_speed_kmh:
+        custom: []
+        name: max_speed_kmh
+        description: validation.min.
+        required: false
+        example: 60
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avg_heart_rate:
+        custom: []
+        name: avg_heart_rate
+        description: 'validation.min validation.max.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      max_heart_rate:
+        custom: []
+        name: max_heart_rate
+        description: 'validation.min validation.max.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      calories:
+        custom: []
+        name: calories
+        description: validation.min.
+        required: false
+        example: 9
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avg_cadence:
+        custom: []
+        name: avg_cadence
+        description: validation.min.
+        required: false
+        example: 52
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      splits:
+        custom: []
+        name: splits
+        description: ''
+        required: false
+        example: null
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      weather:
+        custom: []
+        name: weather
+        description: ''
+        required: false
+        example: null
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      type: architecto
+      title: 'n'
+      description: 'Animi quos velit et fugiat.'
+      visibility: architecto
+      started_at: '2025-11-09T02:30:52'
+      completed_at: '2051-12-03'
+      distance_meters: 39
+      duration_seconds: 84
+      moving_time_seconds: 12
+      elevation_gain: 77
+      elevation_loss: 8
+      avg_speed_kmh: 76
+      max_speed_kmh: 60
+      avg_heart_rate: 1
+      max_heart_rate: 5
+      calories: 9
+      avg_cadence: 52
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/activities/{id}'
+    metadata:
+      custom: []
+      groupName: Activities
+      groupDescription: |-
+
+        Manage completed activities. Activities are GPS-tracked workouts with statistics like distance, pace, and elevation.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get activity'
+      description: 'Retrieve a specific activity with all details including segment efforts.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_BEARER_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the activity.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+      - PATCH
+    uri: 'api/v1/activities/{id}'
+    metadata:
+      custom: []
+      groupName: Activities
+      groupDescription: |-
+
+        Manage completed activities. Activities are GPS-tracked workouts with statistics like distance, pace, and elevation.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update activity'
+      description: 'Update activity details like title, description, or visibility.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_BEARER_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the activity.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      title:
+        custom: []
+        name: title
+        description: validation.max.
+        required: false
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      description:
+        custom: []
+        name: description
+        description: validation.max.
+        required: false
+        example: 'Et animi quos velit et fugiat.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      visibility:
+        custom: []
+        name: visibility
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues:
+          - public
+          - followers
+          - private
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      completed_at:
+        custom: []
+        name: completed_at
+        description: validation.date.
+        required: false
+        example: '2025-11-09T02:30:52'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      distance_meters:
+        custom: []
+        name: distance_meters
+        description: validation.min.
+        required: false
+        example: 39
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      duration_seconds:
+        custom: []
+        name: duration_seconds
+        description: validation.min.
+        required: false
+        example: 84
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      moving_time_seconds:
+        custom: []
+        name: moving_time_seconds
+        description: validation.min.
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      elevation_gain:
+        custom: []
+        name: elevation_gain
+        description: validation.min.
+        required: false
+        example: 77
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      elevation_loss:
+        custom: []
+        name: elevation_loss
+        description: validation.min.
+        required: false
+        example: 8
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avg_speed_kmh:
+        custom: []
+        name: avg_speed_kmh
+        description: validation.min.
+        required: false
+        example: 76
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      max_speed_kmh:
+        custom: []
+        name: max_speed_kmh
+        description: validation.min.
+        required: false
+        example: 60
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avg_heart_rate:
+        custom: []
+        name: avg_heart_rate
+        description: 'validation.min validation.max.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      max_heart_rate:
+        custom: []
+        name: max_heart_rate
+        description: 'validation.min validation.max.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      calories:
+        custom: []
+        name: calories
+        description: validation.min.
+        required: false
+        example: 9
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avg_cadence:
+        custom: []
+        name: avg_cadence
+        description: validation.min.
+        required: false
+        example: 52
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      splits:
+        custom: []
+        name: splits
+        description: ''
+        required: false
+        example: null
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      weather:
+        custom: []
+        name: weather
+        description: ''
+        required: false
+        example: null
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      title: b
+      description: 'Et animi quos velit et fugiat.'
+      visibility: architecto
+      completed_at: '2025-11-09T02:30:52'
+      distance_meters: 39
+      duration_seconds: 84
+      moving_time_seconds: 12
+      elevation_gain: 77
+      elevation_loss: 8
+      avg_speed_kmh: 76
+      max_speed_kmh: 60
+      avg_heart_rate: 1
+      max_heart_rate: 5
+      calories: 9
+      avg_cadence: 52
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/v1/activities/{id}'
+    metadata:
+      custom: []
+      groupName: Activities
+      groupDescription: |-
+
+        Manage completed activities. Activities are GPS-tracked workouts with statistics like distance, pace, and elevation.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete activity'
+      description: 'Permanently delete an activity.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_BEARER_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the activity.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Auth;
 
@@ -12,8 +14,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * @group Authentication
+ *
+ * Endpoints for user authentication and account management
+ */
 class AuthController extends Controller
 {
+    /**
+     * Register a new user
+     *
+     * Creates a new user account and returns an authentication token.
+     *
+     * @unauthenticated
+     */
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = User::create([
@@ -32,6 +46,13 @@ class AuthController extends Controller
         ], 201);
     }
 
+    /**
+     * Login user
+     *
+     * Authenticate a user and return an authentication token.
+     *
+     * @unauthenticated
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $user = User::where('email', $request->email)->first();
@@ -51,6 +72,11 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Logout user
+     *
+     * Revoke the current user's authentication token.
+     */
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
@@ -60,6 +86,11 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Get current user
+     *
+     * Retrieve the authenticated user's profile information.
+     */
     public function me(Request $request): JsonResponse
     {
         return response()->json([

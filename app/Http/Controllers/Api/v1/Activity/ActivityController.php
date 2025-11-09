@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Activity;
 
@@ -11,8 +13,18 @@ use App\Models\Activity\Activity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Activities
+ *
+ * Manage completed activities. Activities are GPS-tracked workouts with statistics like distance, pace, and elevation.
+ */
 class ActivityController extends Controller
 {
+    /**
+     * List activities
+     *
+     * Get a paginated list of the authenticated user's activities.
+     */
     public function index(Request $request): ActivityCollection
     {
         $activities = Activity::query()
@@ -24,6 +36,11 @@ class ActivityController extends Controller
         return new ActivityCollection($activities);
     }
 
+    /**
+     * Create activity
+     *
+     * Manually create a new activity (alternative to using the tracking endpoints).
+     */
     public function store(StoreActivityRequest $request): JsonResponse
     {
         $activity = Activity::create([
@@ -39,6 +56,11 @@ class ActivityController extends Controller
         ], 201);
     }
 
+    /**
+     * Get activity
+     *
+     * Retrieve a specific activity with all details including segment efforts.
+     */
     public function show(Request $request, Activity $activity): JsonResponse
     {
         $this->authorize('view', $activity);
@@ -50,6 +72,11 @@ class ActivityController extends Controller
         ]);
     }
 
+    /**
+     * Update activity
+     *
+     * Update activity details like title, description, or visibility.
+     */
     public function update(UpdateActivityRequest $request, Activity $activity): JsonResponse
     {
         $this->authorize('update', $activity);
@@ -64,6 +91,11 @@ class ActivityController extends Controller
         ]);
     }
 
+    /**
+     * Delete activity
+     *
+     * Permanently delete an activity.
+     */
     public function destroy(Request $request, Activity $activity): JsonResponse
     {
         $this->authorize('delete', $activity);
