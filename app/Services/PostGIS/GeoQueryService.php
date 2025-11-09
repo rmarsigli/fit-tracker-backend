@@ -10,9 +10,49 @@ use Illuminate\Support\Collection;
 
 class GeoQueryService
 {
+    /**
+     * Allowed geometry column names for security
+     */
+    private const ALLOWED_GEOMETRY_COLUMNS = [
+        'route',
+        'location',
+        'start_point',
+        'end_point',
+    ];
+
+    /**
+     * Allowed SQL directions for security
+     */
+    private const ALLOWED_DIRECTIONS = ['ASC', 'DESC'];
+
     public function __construct(
         protected PostGISService $postGIS
     ) {}
+
+    /**
+     * Validate column name to prevent SQL injection
+     */
+    private function validateColumnName(string $columnName): void
+    {
+        if (! in_array($columnName, self::ALLOWED_GEOMETRY_COLUMNS, true)) {
+            throw new \InvalidArgumentException(
+                "Invalid geometry column name: {$columnName}. Allowed: ".implode(', ', self::ALLOWED_GEOMETRY_COLUMNS)
+            );
+        }
+    }
+
+    /**
+     * Validate SQL direction to prevent SQL injection
+     */
+    private function validateDirection(string $direction): void
+    {
+        $direction = strtoupper($direction);
+        if (! in_array($direction, self::ALLOWED_DIRECTIONS, true)) {
+            throw new \InvalidArgumentException(
+                "Invalid SQL direction: {$direction}. Allowed: ".implode(', ', self::ALLOWED_DIRECTIONS)
+            );
+        }
+    }
 
     /**
      * Find activities near a point within a given radius (in meters)
@@ -28,6 +68,7 @@ class GeoQueryService
         $point = $this->postGIS->makePoint($latitude, $longitude);
 
         return Activity::query()
+            ->with('user')
             ->whereNotNull('route')
             ->whereRaw(
                 'ST_DWithin(
@@ -293,6 +334,7 @@ class GeoQueryService
         float $longitude,
         float $radiusMeters
     ): Builder {
+        $this->validateColumnName($columnName);
         $point = $this->postGIS->makePoint($latitude, $longitude);
 
         return $query->whereRaw(
@@ -315,6 +357,8 @@ class GeoQueryService
         float $longitude,
         string $direction = 'ASC'
     ): Builder {
+        $this->validateColumnName($columnName);
+        $this->validateDirection($direction);
         $point = $this->postGIS->makePoint($latitude, $longitude);
 
         return $query->orderByRaw(

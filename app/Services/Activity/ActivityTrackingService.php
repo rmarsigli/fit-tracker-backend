@@ -6,6 +6,7 @@ use App\Enums\Activity\ActivityType;
 use App\Enums\Activity\ActivityVisibility;
 use App\Models\Activity\Activity;
 use App\Models\User;
+use App\Services\PostGIS\PostGISService;
 use Illuminate\Support\Facades\Redis;
 
 class ActivityTrackingService
@@ -14,7 +15,9 @@ class ActivityTrackingService
 
     private const TRACKING_TTL = 7200;
 
-    public function __construct() {}
+    public function __construct(
+        protected PostGISService $postGIS
+    ) {}
 
     public function startActivity(User $user, ActivityType $type, string $title): string
     {
@@ -87,7 +90,7 @@ class ActivityTrackingService
         }
 
         $pausedAt = new \DateTime($data['paused_at']);
-        $pauseDuration = now()->diffInSeconds($pausedAt);
+        $pauseDuration = (int) (now()->timestamp - $pausedAt->getTimestamp());
 
         $data['status'] = 'active';
         $data['total_pause_time'] += $pauseDuration;
@@ -120,7 +123,7 @@ class ActivityTrackingService
             'type' => $data['type'],
             'title' => $data['title'],
             'description' => $description,
-            'visibility' => $visibility?->value ?? ActivityVisibility::Public->value,
+            'visibility' => $visibility ?? ActivityVisibility::Public,
             'started_at' => $data['started_at'],
             'completed_at' => now(),
             'distance_meters' => $stats['distance_meters'],
@@ -134,6 +137,8 @@ class ActivityTrackingService
             'max_heart_rate' => $stats['max_heart_rate'],
             'raw_data' => ['points' => $points],
         ]);
+
+        \App\Jobs\ProcessSegmentEfforts::dispatch($activity);
 
         $redisKey = self::TRACKING_PREFIX.$activityId;
         Redis::del($redisKey);
@@ -165,7 +170,7 @@ class ActivityTrackingService
             $prevPoint = $points[$i - 1];
             $currPoint = $points[$i];
 
-            $distance = $this->calculateDistance(
+            $distance = $this->postGIS->calculateHaversineDistance(
                 $prevPoint['lat'],
                 $prevPoint['lng'],
                 $currPoint['lat'],
@@ -213,23 +218,5 @@ class ActivityTrackingService
             'avg_heart_rate' => count($heartRates) > 0 ? (int) round(array_sum($heartRates) / count($heartRates)) : null,
             'max_heart_rate' => count($heartRates) > 0 ? max($heartRates) : null,
         ];
-    }
-
-    private function calculateDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
-    {
-        $earthRadius = 6371000;
-
-        $lat1Rad = deg2rad($lat1);
-        $lat2Rad = deg2rad($lat2);
-        $deltaLat = deg2rad($lat2 - $lat1);
-        $deltaLon = deg2rad($lon2 - $lon1);
-
-        $a = sin($deltaLat / 2) * sin($deltaLat / 2) +
-             cos($lat1Rad) * cos($lat2Rad) *
-             sin($deltaLon / 2) * sin($deltaLon / 2);
-
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        return $earthRadius * $c;
     }
 }

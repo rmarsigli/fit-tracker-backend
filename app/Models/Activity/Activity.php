@@ -21,6 +21,7 @@ class Activity extends Model
         'type',
         'title',
         'description',
+        'route',
         'distance_meters',
         'duration_seconds',
         'moving_time_seconds',

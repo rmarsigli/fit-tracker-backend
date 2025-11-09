@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Http\Resources\Segment;
 
@@ -19,7 +17,7 @@ class SegmentResource extends JsonResource
             'description' => $this->description,
             'type' => $this->type->value,
             'distance_meters' => $this->distance_meters,
-            'distance_km' => round($this->distance_meters / 1000, 2),
+            'distance_km' => round(($this->distance_meters ?? 0) / 1000, 2),
             'avg_grade_percent' => $this->avg_grade_percent,
             'max_grade_percent' => $this->max_grade_percent,
             'elevation_gain' => $this->elevation_gain,

@@ -134,15 +134,19 @@ class SegmentMatcherService
      */
     protected function updateRankings(SegmentEffort $effort): void
     {
-        $allEfforts = SegmentEffort::where('segment_id', $effort->segment_id)
-            ->orderBy('duration_seconds', 'asc')
-            ->get()
-            ->unique('user_id')
-            ->values();
-
-        foreach ($allEfforts as $index => $segmentEffort) {
-            $segmentEffort->update(['rank_overall' => $index + 1]);
-        }
+        \DB::statement(
+            'UPDATE segment_efforts
+            SET rank_overall = subquery.rank
+            FROM (
+                SELECT DISTINCT ON (user_id) id,
+                       ROW_NUMBER() OVER (ORDER BY duration_seconds ASC) as rank
+                FROM segment_efforts
+                WHERE segment_id = ?
+                ORDER BY user_id, duration_seconds ASC
+            ) as subquery
+            WHERE segment_efforts.id = subquery.id',
+            [$effort->segment_id]
+        );
     }
 
     /**

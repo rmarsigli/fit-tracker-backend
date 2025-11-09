@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Activity;
 
@@ -43,11 +41,7 @@ class ActivityController extends Controller
 
     public function show(Request $request, Activity $activity): JsonResponse
     {
-        if ($activity->user_id !== $request->user()->id) {
-            return response()->json([
-                'message' => 'Você não tem permissão para visualizar esta atividade',
-            ], 403);
-        }
+        $this->authorize('view', $activity);
 
         $activity->load('user', 'segmentEfforts');
 
@@ -58,11 +52,7 @@ class ActivityController extends Controller
 
     public function update(UpdateActivityRequest $request, Activity $activity): JsonResponse
     {
-        if ($activity->user_id !== $request->user()->id) {
-            return response()->json([
-                'message' => 'Você não tem permissão para atualizar esta atividade',
-            ], 403);
-        }
+        $this->authorize('update', $activity);
 
         $activity->update($request->validated());
 
@@ -76,11 +66,7 @@ class ActivityController extends Controller
 
     public function destroy(Request $request, Activity $activity): JsonResponse
     {
-        if ($activity->user_id !== $request->user()->id) {
-            return response()->json([
-                'message' => 'Você não tem permissão para excluir esta atividade',
-            ], 403);
-        }
+        $this->authorize('delete', $activity);
 
         $activity->delete();
 

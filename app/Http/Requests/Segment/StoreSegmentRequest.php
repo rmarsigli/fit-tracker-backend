@@ -1,10 +1,9 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Http\Requests\Segment;
 
 use App\Enums\Segment\SegmentType;
+use App\Rules\ValidEwktLineString;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,7 +27,7 @@ class StoreSegmentRequest extends FormRequest
             'city' => ['nullable', 'string', 'max:100'],
             'state' => ['nullable', 'string', 'max:100'],
             'is_hazardous' => ['nullable', 'boolean'],
-            'route' => ['required', 'string'],
+            'route' => ['required', 'string', new ValidEwktLineString],
         ];
     }
 

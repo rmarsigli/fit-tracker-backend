@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Segment;
 
@@ -67,11 +65,7 @@ class SegmentController extends Controller
 
     public function update(UpdateSegmentRequest $request, Segment $segment): JsonResponse
     {
-        if ($segment->creator_id !== $request->user()->id) {
-            return response()->json([
-                'message' => 'Você não tem permissão para editar este segmento',
-            ], 403);
-        }
+        $this->authorize('update', $segment);
 
         $segment->update($request->validated());
         $segment->load('creator');
@@ -84,11 +78,7 @@ class SegmentController extends Controller
 
     public function destroy(Request $request, Segment $segment): JsonResponse
     {
-        if ($segment->creator_id !== $request->user()->id) {
-            return response()->json([
-                'message' => 'Você não tem permissão para deletar este segmento',
-            ], 403);
-        }
+        $this->authorize('delete', $segment);
 
         $segment->delete();
 

@@ -4,10 +4,17 @@ namespace App\Services\Activity;
 
 use App\Models\Activity\Activity;
 use App\Models\User;
+use App\Services\PostGIS\PostGISService;
 use Illuminate\Support\Collection;
 
 class StatisticsService
 {
+    private const MINIMUM_LAST_SPLIT_DISTANCE_METERS = 100;
+
+    public function __construct(
+        protected PostGISService $postGIS
+    ) {}
+
     public function calculateSplits(Activity $activity): array
     {
         if (! $activity->raw_data || ! isset($activity->raw_data['points'])) {
@@ -20,6 +27,10 @@ class StatisticsService
             return [];
         }
 
+        usort($points, function ($a, $b) {
+            return strtotime($a['timestamp']) <=> strtotime($b['timestamp']);
+        });
+
         $splits = [];
         $currentDistance = 0;
         $currentSplitStart = 0;
@@ -29,7 +40,7 @@ class StatisticsService
             $prevPoint = $points[$i - 1];
             $currPoint = $points[$i];
 
-            $segmentDistance = $this->calculateDistance(
+            $segmentDistance = $this->postGIS->calculateHaversineDistance(
                 $prevPoint['lat'],
                 $prevPoint['lng'],
                 $currPoint['lat'],
@@ -57,7 +68,7 @@ class StatisticsService
             }
         }
 
-        if ($currentDistance > 100 && $currentSplitStart < count($points) - 1) {
+        if ($currentDistance > self::MINIMUM_LAST_SPLIT_DISTANCE_METERS && $currentSplitStart < count($points) - 1) {
             $splitNumber = count($splits) + 1;
             $splitStartTime = new \DateTime($points[$currentSplitStart]['timestamp']);
             $splitEndTime = new \DateTime($points[count($points) - 1]['timestamp']);
@@ -128,6 +139,7 @@ class StatisticsService
     {
         $activities = Activity::where('user_id', $user->id)
             ->whereNotNull('completed_at')
+            ->select(['id', 'user_id', 'type', 'distance_meters', 'duration_seconds', 'elevation_gain', 'completed_at'])
             ->get();
 
         if ($activities->isEmpty()) {
@@ -151,11 +163,13 @@ class StatisticsService
         $last7Days = Activity::where('user_id', $user->id)
             ->whereNotNull('completed_at')
             ->where('completed_at', '>=', now()->subDays(7))
+            ->select(['distance_meters', 'duration_seconds'])
             ->get();
 
         $last30Days = Activity::where('user_id', $user->id)
             ->whereNotNull('completed_at')
             ->where('completed_at', '>=', now()->subDays(30))
+            ->select(['distance_meters', 'duration_seconds'])
             ->get();
 
         return [
@@ -194,31 +208,7 @@ class StatisticsService
 
     public function getFollowingFeed(User $user, int $limit = 20): Collection
     {
-        return Activity::query()
-            ->with('user')
-            ->whereIn('user_id', $user->following()->pluck('following_id'))
-            ->whereNotNull('completed_at')
-            ->latest('completed_at')
-            ->limit($limit)
-            ->get();
-    }
-
-    private function calculateDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
-    {
-        $earthRadius = 6371000;
-
-        $lat1Rad = deg2rad($lat1);
-        $lat2Rad = deg2rad($lat2);
-        $deltaLat = deg2rad($lat2 - $lat1);
-        $deltaLon = deg2rad($lon2 - $lon1);
-
-        $a = sin($deltaLat / 2) * sin($deltaLat / 2) +
-             cos($lat1Rad) * cos($lat2Rad) *
-             sin($deltaLon / 2) * sin($deltaLon / 2);
-
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        return $earthRadius * $c;
+        return collect();
     }
 
     private function calculatePaceFromTime(float $distanceMeters, int $durationSeconds): string
