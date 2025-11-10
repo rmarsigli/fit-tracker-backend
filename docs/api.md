@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0
 **Base URL**: `http://localhost:8000/api/v1`
-**Last Updated**: 2025-11-08
+**Last Updated**: 2025-11-10
 
 ---
 
@@ -14,8 +14,13 @@
 4. [Activity Tracking](#activity-tracking)
 5. [Statistics](#statistics)
 6. [Segments](#segments)
-7. [Data Models](#data-models)
-8. [Error Responses](#error-responses)
+7. [Social Features](#social-features)
+   - [Follow System](#follow-system)
+   - [Likes](#likes)
+   - [Comments](#comments)
+   - [Activity Feeds](#activity-feeds)
+8. [Data Models](#data-models)
+9. [Error Responses](#error-responses)
 
 ---
 
@@ -887,6 +892,412 @@ Find segments near a location.
   ]
 }
 ```
+
+---
+
+## Social Features
+
+FitTrack BR includes comprehensive social features to connect users and create an engaging fitness community.
+
+### Follow System
+
+Users can follow each other to see their activities in personalized feeds.
+
+#### Follow a User
+
+**Endpoint**: `POST /users/{userId}/follow`
+**Authentication**: Required
+
+**Success Response** (201 Created):
+```json
+{
+  "message": "Successfully followed user",
+  "user": {
+    "id": 2,
+    "name": "Maria Santos",
+    "username": "mariasantos",
+    "email": "maria@example.com",
+    "followers_count": 15,
+    "following_count": 23,
+    "is_following": true,
+    "created_at": "2025-11-10T12:00:00.000000Z"
+  }
+}
+```
+
+**Error Responses**:
+- `400 Bad Request` - Cannot follow yourself
+- `409 Conflict` - Already following this user
+
+---
+
+#### Unfollow a User
+
+**Endpoint**: `DELETE /users/{userId}/unfollow`
+**Authentication**: Required
+
+**Success Response** (200 OK):
+```json
+{
+  "message": "Successfully unfollowed user"
+}
+```
+
+**Error Responses**:
+- `404 Not Found` - Not following this user
+
+---
+
+#### Get User Followers
+
+Get a paginated list of users who follow a specific user.
+
+**Endpoint**: `GET /users/{userId}/followers`
+**Authentication**: Required
+
+**Success Response** (200 OK):
+```json
+{
+  "data": [
+    {
+      "id": 3,
+      "name": "Pedro Costa",
+      "username": "pedrocosta",
+      "email": "pedro@example.com",
+      "followers_count": 10,
+      "following_count": 15,
+      "is_following": false,
+      "created_at": "2025-11-10T12:00:00.000000Z"
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 20,
+    "total": 1
+  }
+}
+```
+
+---
+
+#### Get User Following
+
+Get a paginated list of users that a specific user follows.
+
+**Endpoint**: `GET /users/{userId}/following`
+**Authentication**: Required
+
+**Response**: Same structure as Get User Followers
+
+---
+
+### Likes
+
+Users can like activities to show appreciation and support.
+
+#### Toggle Like on Activity
+
+Like or unlike an activity (toggle action).
+
+**Endpoint**: `POST /activities/{activityId}/likes`
+**Authentication**: Required
+
+**Success Response** (201 Created or 200 OK):
+```json
+{
+  "message": "Activity liked successfully",
+  "liked": true,
+  "likes_count": 15
+}
+```
+
+Or when unliking:
+```json
+{
+  "message": "Like removed successfully",
+  "liked": false,
+  "likes_count": 14
+}
+```
+
+---
+
+#### Get Activity Likes
+
+Get a paginated list of users who liked an activity.
+
+**Endpoint**: `GET /activities/{activityId}/likes`
+**Authentication**: Required
+
+**Success Response** (200 OK):
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "user": {
+        "id": 5,
+        "name": "Ana Silva",
+        "username": "anasilva"
+      },
+      "created_at": "2025-11-10T12:00:00.000000Z"
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 50,
+    "total": 15
+  }
+}
+```
+
+---
+
+### Comments
+
+Users can comment on activities to provide feedback and encouragement.
+
+#### Get Activity Comments
+
+Get a paginated list of comments on an activity.
+
+**Endpoint**: `GET /activities/{activityId}/comments`
+**Authentication**: Required
+
+**Success Response** (200 OK):
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "activity_id": 10,
+      "user_id": 5,
+      "content": "Great run! Keep it up!",
+      "user": {
+        "id": 5,
+        "name": "Carlos Oliveira",
+        "username": "carlosoliveira",
+        "email": "carlos@example.com",
+        "followers_count": 20,
+        "following_count": 30,
+        "is_following": true,
+        "created_at": "2025-11-10T10:00:00.000000Z"
+      },
+      "created_at": "2025-11-10T14:30:00.000000Z",
+      "updated_at": "2025-11-10T14:30:00.000000Z"
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 20,
+    "total": 5
+  }
+}
+```
+
+---
+
+#### Create Comment
+
+Post a comment on an activity.
+
+**Endpoint**: `POST /activities/{activityId}/comments`
+**Authentication**: Required
+
+**Request Body**:
+```json
+{
+  "content": "Awesome pace! How do you maintain it?"
+}
+```
+
+**Validation Rules**:
+- `content`: required, string, min:1, max:1000
+
+**Success Response** (201 Created):
+```json
+{
+  "message": "Comment created successfully",
+  "data": {
+    "id": 2,
+    "activity_id": 10,
+    "user_id": 1,
+    "content": "Awesome pace! How do you maintain it?",
+    "user": {
+      "id": 1,
+      "name": "João Silva",
+      "username": "joaosilva",
+      "email": "joao@example.com",
+      "followers_count": 10,
+      "following_count": 15,
+      "created_at": "2025-11-10T10:00:00.000000Z"
+    },
+    "created_at": "2025-11-10T15:00:00.000000Z",
+    "updated_at": "2025-11-10T15:00:00.000000Z"
+  }
+}
+```
+
+---
+
+#### Delete Comment
+
+Delete your own comment.
+
+**Endpoint**: `DELETE /comments/{commentId}`
+**Authentication**: Required
+
+**Success Response** (200 OK):
+```json
+{
+  "message": "Comment deleted successfully"
+}
+```
+
+**Error Responses**:
+- `403 Forbidden` - You can only delete your own comments
+
+---
+
+### Activity Feeds
+
+Personalized activity feeds to discover and stay connected.
+
+#### Following Feed
+
+Get activities from users you follow.
+
+**Endpoint**: `GET /feed/following`
+**Authentication**: Required
+
+**Query Parameters**:
+- `limit` (optional, default: 20, max: 50) - Number of activities to return
+
+**Example**: `GET /feed/following?limit=10`
+
+**Success Response** (200 OK):
+```json
+{
+  "data": [
+    {
+      "id": 100,
+      "user_id": 5,
+      "type": "run",
+      "title": "Morning Run",
+      "description": "Easy recovery run",
+      "distance_meters": 5000,
+      "duration_seconds": 1800,
+      "elevation_gain": 50,
+      "avg_speed_kmh": 10.0,
+      "visibility": "public",
+      "started_at": "2025-11-10T06:00:00.000000Z",
+      "completed_at": "2025-11-10T06:30:00.000000Z"
+    }
+  ],
+  "meta": {
+    "count": 10,
+    "limit": 10
+  }
+}
+```
+
+**Notes**:
+- Only shows public activities
+- Only shows completed activities
+- Results are cached for 5 minutes
+- Ordered by most recent first
+
+---
+
+#### Nearby Feed
+
+Discover activities near a specific location using PostGIS.
+
+**Endpoint**: `GET /feed/nearby`
+**Authentication**: Required
+
+**Query Parameters**:
+- `lat` (required, float, between: -90,90) - Latitude
+- `lng` (required, float, between: -180,180) - Longitude
+- `radius` (optional, integer, min: 1, max: 100, default: 10) - Search radius in kilometers
+- `limit` (optional, integer, min: 1, max: 50, default: 20) - Number of activities
+
+**Example**: `GET /feed/nearby?lat=-23.5505&lng=-46.6333&radius=5&limit=20`
+
+**Success Response** (200 OK):
+```json
+{
+  "data": [
+    {
+      "id": 101,
+      "user_id": 8,
+      "type": "ride",
+      "title": "Cycling in Ibirapuera",
+      "distance_meters": 15000,
+      "duration_seconds": 2700,
+      "visibility": "public",
+      "completed_at": "2025-11-10T08:00:00.000000Z"
+    }
+  ],
+  "meta": {
+    "count": 15,
+    "radius_km": 5,
+    "limit": 20
+  }
+}
+```
+
+**Notes**:
+- Only activities with GPS routes
+- Uses PostGIS ST_DWithin for efficient geospatial queries
+- Results are cached for 5 minutes
+
+---
+
+#### Trending Feed
+
+Get trending activities based on likes.
+
+**Endpoint**: `GET /feed/trending`
+**Authentication**: Required
+
+**Query Parameters**:
+- `days` (optional, integer, max: 30, default: 7) - Time window in days
+- `limit` (optional, integer, min: 1, max: 50, default: 20) - Number of activities
+
+**Example**: `GET /feed/trending?days=7&limit=10`
+
+**Success Response** (200 OK):
+```json
+{
+  "data": [
+    {
+      "id": 150,
+      "user_id": 12,
+      "type": "run",
+      "title": "Marathon PR!",
+      "distance_meters": 42195,
+      "duration_seconds": 10800,
+      "visibility": "public",
+      "completed_at": "2025-11-09T10:00:00.000000Z",
+      "likes_count": 45
+    }
+  ],
+  "meta": {
+    "count": 10,
+    "days": 7,
+    "limit": 10
+  }
+}
+```
+
+**Notes**:
+- Only shows activities with at least 1 like
+- Ordered by likes count (descending), then by date
+- Results are cached for 5 minutes
 
 ---
 
