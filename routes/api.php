@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\v1\Activity\StatisticsController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\v1\Segment\SegmentController;
 use App\Http\Controllers\Api\v1\Social\CommentController;
+use App\Http\Controllers\Api\v1\Social\FeedController;
 use App\Http\Controllers\Api\v1\Social\FollowController;
 use App\Http\Controllers\Api\v1\Social\LikeController;
 use Illuminate\Support\Facades\Route;
@@ -58,5 +59,11 @@ Route::prefix('v1')->group(function () {
         Route::get('activities/{activity}/comments', [CommentController::class, 'index']);
         Route::post('activities/{activity}/comments', [CommentController::class, 'store']);
         Route::delete('comments/{comment}', [CommentController::class, 'destroy']);
+
+        Route::prefix('feed')->group(function () {
+            Route::get('following', [FeedController::class, 'following']);
+            Route::get('nearby', [FeedController::class, 'nearby']);
+            Route::get('trending', [FeedController::class, 'trending']);
+        });
     });
 });
