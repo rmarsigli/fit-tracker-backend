@@ -114,4 +114,43 @@ class ActivityData extends Data
             updated_at: $activity->updated_at?->toISOString() ?? Optional::create(),
         );
     }
+
+    public static function getRawDataSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'properties' => [
+                'points' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'lat' => ['type' => 'number'],
+                            'lng' => ['type' => 'number'],
+                            'alt' => ['type' => ['number', 'null']],
+                            'hr' => ['type' => ['integer', 'null']],
+                            'timestamp' => ['type' => 'string'],
+                        ],
+                        'required' => ['lat', 'lng', 'timestamp'],
+                    ],
+                ],
+            ],
+            'required' => ['points'],
+        ];
+    }
+
+    public static function getWeatherSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'properties' => [
+                'temp' => ['type' => ['number', 'null']],
+                'feels_like' => ['type' => ['number', 'null']],
+                'humidity' => ['type' => ['integer', 'null']],
+                'wind_speed' => ['type' => ['number', 'null']],
+                'condition' => ['type' => ['string', 'null']],
+                'description' => ['type' => ['string', 'null']],
+            ],
+        ];
+    }
 }

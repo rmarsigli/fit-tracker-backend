@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Challenge extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected static function newFactory()
     {
@@ -80,5 +82,13 @@ class Challenge extends Model
         }
 
         return $this->participants()->count() >= $this->max_participants;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'description', 'type', 'goal_value', 'starts_at', 'ends_at', 'is_public'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }
