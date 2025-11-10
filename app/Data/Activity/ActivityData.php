@@ -7,6 +7,7 @@ namespace App\Data\Activity;
 use App\Enums\Activity\ActivityType;
 use App\Enums\Activity\ActivityVisibility;
 use App\Models\Activity\Activity;
+use Spatie\LaravelData\Attributes\Computed;
 use Spatie\LaravelData\Attributes\Validation\AfterOrEqual;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\IntegerType;
@@ -84,21 +85,38 @@ class ActivityData extends Data
 
         public string|Optional $created_at,
         public string|Optional $updated_at,
+
+        #[Computed]
+        public float|Optional|null $distance_km = null,
+
+        #[Computed]
+        public string|Optional|null $duration_formatted = null,
+
+        #[Computed]
+        public string|Optional|null $avg_pace_min_km = null,
     ) {}
 
     public static function fromModel(Activity $activity): self
     {
+        $distanceMeters = $activity->distance_meters;
+        $durationSeconds = $activity->duration_seconds;
+        $avgSpeedKmh = $activity->avg_speed_kmh;
+
+        $distanceKm = $distanceMeters ? round($distanceMeters / 1000, 2) : Optional::create();
+        $durationFormatted = $durationSeconds ? self::staticFormatDuration($durationSeconds) : Optional::create();
+        $avgPaceMinKm = ($avgSpeedKmh && $avgSpeedKmh > 0) ? self::staticCalculatePace($avgSpeedKmh) : Optional::create();
+
         return new self(
             id: $activity->id,
             type: $activity->type,
             title: $activity->title,
             description: $activity->description,
-            distance_meters: $activity->distance_meters,
-            duration_seconds: $activity->duration_seconds,
+            distance_meters: $distanceMeters,
+            duration_seconds: $durationSeconds,
             moving_time_seconds: $activity->moving_time_seconds,
             elevation_gain: $activity->elevation_gain,
             elevation_loss: $activity->elevation_loss,
-            avg_speed_kmh: $activity->avg_speed_kmh,
+            avg_speed_kmh: $avgSpeedKmh,
             max_speed_kmh: $activity->max_speed_kmh,
             avg_heart_rate: $activity->avg_heart_rate,
             max_heart_rate: $activity->max_heart_rate,
@@ -112,6 +130,9 @@ class ActivityData extends Data
             completed_at: $activity->completed_at?->toISOString(),
             created_at: $activity->created_at?->toISOString() ?? Optional::create(),
             updated_at: $activity->updated_at?->toISOString() ?? Optional::create(),
+            distance_km: $distanceKm,
+            duration_formatted: $durationFormatted,
+            avg_pace_min_km: $avgPaceMinKm,
         );
     }
 
@@ -152,5 +173,35 @@ class ActivityData extends Data
                 'description' => ['type' => ['string', 'null']],
             ],
         ];
+    }
+
+    private static function staticFormatDuration(int $seconds): string
+    {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $secs = $seconds % 60;
+
+        if ($hours > 0) {
+            return sprintf('%dh %02dm %02ds', $hours, $minutes, $secs);
+        }
+
+        if ($minutes > 0) {
+            return sprintf('%dm %02ds', $minutes, $secs);
+        }
+
+        return sprintf('%ds', $secs);
+    }
+
+    private static function staticCalculatePace(float $speedKmh): string
+    {
+        if ($speedKmh <= 0) {
+            return '0:00';
+        }
+
+        $paceMinutesPerKm = 60 / $speedKmh;
+        $minutes = floor($paceMinutesPerKm);
+        $seconds = round(($paceMinutesPerKm - $minutes) * 60);
+
+        return sprintf('%d:%02d', $minutes, $seconds);
     }
 }

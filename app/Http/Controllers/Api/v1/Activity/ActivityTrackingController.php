@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Activity;
 
+use App\Data\Activity\ActivityData;
 use App\Enums\Activity\ActivityType;
 use App\Enums\Activity\ActivityVisibility;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Activity\ActivityResource;
 use App\Services\Activity\ActivityTrackingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -150,7 +150,7 @@ class ActivityTrackingController extends Controller
 
         return response()->json([
             'message' => 'Atividade finalizada com sucesso',
-            'data' => new ActivityResource($activity),
+            'data' => ActivityData::from($activity),
         ]);
     }
 

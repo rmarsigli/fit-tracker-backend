@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Activity;
 
+use App\Data\Activity\ActivityData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Activity\StoreActivityRequest;
-use App\Http\Requests\Activity\UpdateActivityRequest;
-use App\Http\Resources\Activity\ActivityCollection;
-use App\Http\Resources\Activity\ActivityResource;
 use App\Models\Activity\Activity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\LaravelData\DataCollection;
+use Spatie\LaravelData\Optional;
 
 /**
  * @group Activities
@@ -25,7 +24,7 @@ class ActivityController extends Controller
      *
      * Get a paginated list of the authenticated user's activities.
      */
-    public function index(Request $request): ActivityCollection
+    public function index(Request $request): JsonResponse
     {
         $activities = Activity::query()
             ->with('user')
@@ -33,7 +32,15 @@ class ActivityController extends Controller
             ->latest('started_at')
             ->paginate(20);
 
-        return new ActivityCollection($activities);
+        return response()->json([
+            'data' => ActivityData::collect($activities->items(), DataCollection::class),
+            'meta' => [
+                'current_page' => $activities->currentPage(),
+                'last_page' => $activities->lastPage(),
+                'per_page' => $activities->perPage(),
+                'total' => $activities->total(),
+            ],
+        ]);
     }
 
     /**
@@ -41,10 +48,35 @@ class ActivityController extends Controller
      *
      * Manually create a new activity (alternative to using the tracking endpoints).
      */
-    public function store(StoreActivityRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
+        try {
+            $data = ActivityData::from($request->all());
+        } catch (\Spatie\LaravelData\Exceptions\CannotCastEnum $e) {
+            return response()->json([
+                'message' => 'Tipo de atividade inválido',
+                'errors' => ['type' => ['O tipo de atividade fornecido não é válido.']],
+            ], 422);
+        } catch (\ArgumentCountError $e) {
+            return response()->json([
+                'message' => 'Campos obrigatórios ausentes',
+                'errors' => ['message' => ['Os campos obrigatórios não foram fornecidos.']],
+            ], 422);
+        }
+
+        $dataArray = $data->except('id', 'created_at', 'updated_at', 'distance_km', 'duration_formatted', 'avg_pace_min_km')->toArray();
+
+        // Remove Optional instances - convert to null
+        $dataArray = array_map(
+            fn ($value) => $value instanceof Optional ? null : $value,
+            $dataArray
+        );
+
+        // Remove null values to let database defaults work
+        $dataArray = array_filter($dataArray, fn ($value) => $value !== null);
+
         $activity = Activity::create([
-            ...$request->validated(),
+            ...$dataArray,
             'user_id' => $request->user()->id,
         ]);
 
@@ -52,7 +84,7 @@ class ActivityController extends Controller
 
         return response()->json([
             'message' => 'Atividade criada com sucesso',
-            'data' => new ActivityResource($activity),
+            'data' => ActivityData::from($activity),
         ], 201);
     }
 
@@ -68,7 +100,7 @@ class ActivityController extends Controller
         $activity->load('user', 'segmentEfforts');
 
         return response()->json([
-            'data' => new ActivityResource($activity),
+            'data' => ActivityData::from($activity),
         ]);
     }
 
@@ -77,17 +109,34 @@ class ActivityController extends Controller
      *
      * Update activity details like title, description, or visibility.
      */
-    public function update(UpdateActivityRequest $request, Activity $activity): JsonResponse
+    public function update(Request $request, Activity $activity): JsonResponse
     {
         $this->authorize('update', $activity);
 
-        $activity->update($request->validated());
+        try {
+            $data = ActivityData::from($request->all());
+        } catch (\Spatie\LaravelData\Exceptions\CannotCastEnum $e) {
+            return response()->json([
+                'message' => 'Tipo de atividade inválido',
+                'errors' => ['type' => ['O tipo de atividade fornecido não é válido.']],
+            ], 422);
+        }
+
+        $dataArray = $data->except('id', 'created_at', 'updated_at', 'distance_km', 'duration_formatted', 'avg_pace_min_km')->toArray();
+
+        // Remove Optional instances but keep nulls
+        $dataArray = array_map(
+            fn ($value) => $value instanceof Optional ? null : $value,
+            $dataArray
+        );
+
+        $activity->update($dataArray);
 
         $activity->load('user');
 
         return response()->json([
             'message' => 'Atividade atualizada com sucesso',
-            'data' => new ActivityResource($activity),
+            'data' => ActivityData::from($activity),
         ]);
     }
 

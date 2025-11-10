@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Segment;
 
+use App\Data\Segment\SegmentData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Segment\StoreSegmentRequest;
-use App\Http\Requests\Segment\UpdateSegmentRequest;
-use App\Http\Resources\Segment\SegmentCollection;
-use App\Http\Resources\Segment\SegmentResource;
 use App\Models\Segment\Segment;
 use App\Services\PostGIS\GeoQueryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\LaravelData\DataCollection;
+use Spatie\LaravelData\Optional;
 
 /**
  * @group Segments
@@ -30,7 +29,7 @@ class SegmentController extends Controller
      *
      * Get a paginated list of segments with optional filtering by type or creator.
      */
-    public function index(Request $request): SegmentCollection
+    public function index(Request $request): JsonResponse
     {
         $query = Segment::query()->with('creator');
 
@@ -48,7 +47,15 @@ class SegmentController extends Controller
 
         $segments = $query->latest()->paginate(20);
 
-        return new SegmentCollection($segments);
+        return response()->json([
+            'data' => SegmentData::collect($segments->items(), DataCollection::class),
+            'meta' => [
+                'current_page' => $segments->currentPage(),
+                'last_page' => $segments->lastPage(),
+                'per_page' => $segments->perPage(),
+                'total' => $segments->total(),
+            ],
+        ]);
     }
 
     /**
@@ -56,10 +63,35 @@ class SegmentController extends Controller
      *
      * Create a new segment from a GPS route.
      */
-    public function store(StoreSegmentRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
+        try {
+            $data = SegmentData::from($request->all());
+        } catch (\Spatie\LaravelData\Exceptions\CannotCastEnum $e) {
+            return response()->json([
+                'message' => 'Tipo de segmento inválido',
+                'errors' => ['type' => ['O tipo de segmento fornecido não é válido.']],
+            ], 422);
+        } catch (\ArgumentCountError $e) {
+            return response()->json([
+                'message' => 'Campos obrigatórios ausentes',
+                'errors' => ['message' => ['Os campos obrigatórios não foram fornecidos.']],
+            ], 422);
+        }
+
+        $dataArray = $data->except('id', 'created_at', 'updated_at', 'creator', 'distance_km')->toArray();
+
+        // Remove Optional instances - convert to null
+        $dataArray = array_map(
+            fn ($value) => $value instanceof Optional ? null : $value,
+            $dataArray
+        );
+
+        // Remove null values to let database defaults work
+        $dataArray = array_filter($dataArray, fn ($value) => $value !== null);
+
         $segment = Segment::create([
-            ...$request->validated(),
+            ...$dataArray,
             'creator_id' => $request->user()->id,
         ]);
 
@@ -67,7 +99,7 @@ class SegmentController extends Controller
 
         return response()->json([
             'message' => 'Segmento criado com sucesso',
-            'data' => new SegmentResource($segment),
+            'data' => SegmentData::from($segment),
         ], 201);
     }
 
@@ -81,7 +113,7 @@ class SegmentController extends Controller
         $segment->load('creator');
 
         return response()->json([
-            'data' => new SegmentResource($segment),
+            'data' => SegmentData::from($segment),
         ]);
     }
 
@@ -90,16 +122,36 @@ class SegmentController extends Controller
      *
      * Update segment details. Only the creator can update a segment.
      */
-    public function update(UpdateSegmentRequest $request, Segment $segment): JsonResponse
+    public function update(Request $request, Segment $segment): JsonResponse
     {
         $this->authorize('update', $segment);
 
-        $segment->update($request->validated());
+        try {
+            $data = SegmentData::from($request->all());
+        } catch (\Spatie\LaravelData\Exceptions\CannotCastEnum $e) {
+            return response()->json([
+                'message' => 'Tipo de segmento inválido',
+                'errors' => ['type' => ['O tipo de segmento fornecido não é válido.']],
+            ], 422);
+        }
+
+        $dataArray = $data->except('id', 'created_at', 'updated_at', 'creator', 'distance_km')->toArray();
+
+        // Remove Optional instances - convert to null
+        $dataArray = array_map(
+            fn ($value) => $value instanceof Optional ? null : $value,
+            $dataArray
+        );
+
+        // Remove null values to let database defaults work
+        $dataArray = array_filter($dataArray, fn ($value) => $value !== null);
+
+        $segment->update($dataArray);
         $segment->load('creator');
 
         return response()->json([
             'message' => 'Segmento atualizado com sucesso',
-            'data' => new SegmentResource($segment),
+            'data' => SegmentData::from($segment),
         ]);
     }
 
@@ -146,7 +198,7 @@ class SegmentController extends Controller
         );
 
         return response()->json([
-            'data' => SegmentResource::collection($segments),
+            'data' => SegmentData::collect($segments, DataCollection::class),
             'meta' => [
                 'total' => $segments->count(),
                 'latitude' => $latitude,

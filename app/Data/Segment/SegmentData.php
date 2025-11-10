@@ -6,6 +6,7 @@ namespace App\Data\Segment;
 
 use App\Enums\Segment\SegmentType;
 use App\Models\Segment\Segment;
+use Spatie\LaravelData\Attributes\Computed;
 use Spatie\LaravelData\Attributes\Validation\Between;
 use Spatie\LaravelData\Attributes\Validation\BooleanType;
 use Spatie\LaravelData\Attributes\Validation\Enum;
@@ -28,11 +29,11 @@ class SegmentData extends Data
         #[Nullable]
         public ?string $description,
 
-        #[Required, Enum(SegmentType::class)]
-        public SegmentType $type,
+        #[Nullable, Enum(SegmentType::class)]
+        public SegmentType|Optional|null $type,
 
-        #[Required, Numeric, Between(100, 100000)]
-        public float $distance_meters,
+        #[Nullable, Numeric, Between(100, 100000)]
+        public float|Optional|null $distance_meters,
 
         #[Nullable, Numeric]
         public ?float $avg_grade_percent,
@@ -60,16 +61,24 @@ class SegmentData extends Data
 
         public string|Optional $created_at,
         public string|Optional $updated_at,
+
+        #[Computed]
+        public float|Optional|null $distance_km = null,
     ) {}
 
     public static function fromModel(Segment $segment): self
     {
+        $distanceMeters = $segment->distance_meters ?? Optional::create();
+        $distanceKm = is_float($distanceMeters) || is_int($distanceMeters)
+            ? round($distanceMeters / 1000, 2)
+            : Optional::create();
+
         return new self(
             id: $segment->id,
             name: $segment->name,
             description: $segment->description,
-            type: $segment->type,
-            distance_meters: $segment->distance_meters,
+            type: $segment->type ?? Optional::create(),
+            distance_meters: $distanceMeters,
             avg_grade_percent: $segment->avg_grade_percent,
             max_grade_percent: $segment->max_grade_percent,
             elevation_gain: $segment->elevation_gain,
@@ -80,6 +89,7 @@ class SegmentData extends Data
             is_hazardous: $segment->is_hazardous ?? Optional::create(),
             created_at: $segment->created_at?->toISOString() ?? Optional::create(),
             updated_at: $segment->updated_at?->toISOString() ?? Optional::create(),
+            distance_km: $distanceKm,
         );
     }
 }
