@@ -7,7 +7,9 @@ use App\Http\Controllers\Api\v1\Activity\ActivityTrackingController;
 use App\Http\Controllers\Api\v1\Activity\StatisticsController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\v1\Segment\SegmentController;
+use App\Http\Controllers\Api\v1\Social\CommentController;
 use App\Http\Controllers\Api\v1\Social\FollowController;
+use App\Http\Controllers\Api\v1\Social\LikeController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -49,5 +51,12 @@ Route::prefix('v1')->group(function () {
         Route::delete('users/{user}/unfollow', [FollowController::class, 'unfollow']);
         Route::get('users/{user}/followers', [FollowController::class, 'followers']);
         Route::get('users/{user}/following', [FollowController::class, 'following']);
+
+        Route::post('activities/{activity}/likes', [LikeController::class, 'toggle']);
+        Route::get('activities/{activity}/likes', [LikeController::class, 'index']);
+
+        Route::get('activities/{activity}/comments', [CommentController::class, 'index']);
+        Route::post('activities/{activity}/comments', [CommentController::class, 'store']);
+        Route::delete('comments/{comment}', [CommentController::class, 'destroy']);
     });
 });

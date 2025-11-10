@@ -71,6 +71,31 @@ class Activity extends Model
         return $this->hasMany(SegmentEffort::class);
     }
 
+    public function likes(): HasMany
+    {
+        return $this->hasMany(\App\Models\Social\Like::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(\App\Models\Social\Comment::class)->latest();
+    }
+
+    public function likesCount(): int
+    {
+        return $this->likes()->count();
+    }
+
+    public function commentsCount(): int
+    {
+        return $this->comments()->count();
+    }
+
+    public function isLikedBy(User $user): bool
+    {
+        return $this->likes()->where('user_id', $user->id)->exists();
+    }
+
     public function calculateAverageSpeed(): ?float
     {
         if (! $this->distance_meters || ! $this->moving_time_seconds) {
