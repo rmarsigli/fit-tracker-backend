@@ -1,12 +1,12 @@
 # FitTrack BR - Backend API
 
-[![Tests](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/tests.yml/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/tests.yml)
+[![Tests](https://github.com/rmarsigli/fit-tracker-backend/actions/workflows/tests.yml/badge.svg)](https://github.com/rmarsigli/fit-tracker-backend/actions/workflows/tests.yml)
 [![PHPStan Level 5](https://img.shields.io/badge/PHPStan-level%205-brightgreen.svg?style=flat-square)](https://phpstan.org/)
 [![Code Style](https://img.shields.io/badge/code%20style-pint-orange.svg?style=flat-square)](https://laravel.com/docs/pint)
 [![PHP 8.4](https://img.shields.io/badge/PHP-8.4-777BB4.svg?style=flat-square&logo=php)](https://www.php.net/)
 [![Laravel 12](https://img.shields.io/badge/Laravel-12-FF2D20.svg?style=flat-square&logo=laravel)](https://laravel.com)
 [![Tests](https://img.shields.io/badge/tests-220%20passing-brightgreen.svg?style=flat-square)](https://pestphp.com/)
-[![Quality Score](https://img.shields.io/badge/quality-100%2F100-brightgreen.svg?style=flat-square)](https://github.com/YOUR_USERNAME/YOUR_REPO)
+[![Quality Score](https://img.shields.io/badge/quality-100%2F100-brightgreen.svg?style=flat-square)](https://github.com/rmarsigli/fit-tracker-backend)
 
 A fitness tracking platform API built with Laravel 12 and PostgreSQL + PostGIS, designed for the Brazilian market.
 
