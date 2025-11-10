@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Cache;
 
 class FeedService
 {
+    private const FEED_CACHE_TTL = 300; // 5 minutes
+
     public function getFollowingFeed(User $user, int $limit = 20): Collection
     {
         $cacheKey = "feed:following:{$user->id}:{$limit}";
 
-        return Cache::remember($cacheKey, 300, function () use ($user, $limit) {
+        return Cache::remember($cacheKey, self::FEED_CACHE_TTL, function () use ($user, $limit) {
             $followingIds = $user->following()
                 ->pluck('following_id')
                 ->toArray();
@@ -39,7 +41,7 @@ class FeedService
     {
         $cacheKey = "feed:nearby:{$lat}:{$lng}:{$radiusKm}:{$limit}";
 
-        return Cache::remember($cacheKey, 300, function () use ($lat, $lng, $radiusKm, $limit) {
+        return Cache::remember($cacheKey, self::FEED_CACHE_TTL, function () use ($lat, $lng, $radiusKm, $limit) {
             $radiusMeters = $radiusKm * 1000;
 
             return Activity::query()
@@ -61,7 +63,7 @@ class FeedService
     {
         $cacheKey = "feed:trending:{$days}:{$limit}";
 
-        return Cache::remember($cacheKey, 300, function () use ($days, $limit) {
+        return Cache::remember($cacheKey, self::FEED_CACHE_TTL, function () use ($days, $limit) {
             return Activity::query()
                 ->with(['user', 'segmentEfforts.segment', 'likes'])
                 ->where('visibility', 'public')

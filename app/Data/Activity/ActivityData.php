@@ -24,10 +24,10 @@ class ActivityData extends Data
         public int|Optional $id,
 
         #[Required, Enum(ActivityType::class)]
-        public ActivityType $type,
+        public ActivityType|Optional $type,
 
         #[Required, Min(3)]
-        public string $title,
+        public string|Optional $title,
 
         #[Nullable]
         public ?string $description,
@@ -75,10 +75,10 @@ class ActivityData extends Data
         public ?array $raw_data,
 
         #[Nullable, Enum(ActivityVisibility::class)]
-        public ActivityVisibility|Optional|null $visibility,
+        public ActivityVisibility|Optional|null $visibility = null,
 
         #[Required]
-        public string $started_at,
+        public string|Optional $started_at,
 
         #[Nullable, AfterOrEqual('started_at')]
         public ?string $completed_at,

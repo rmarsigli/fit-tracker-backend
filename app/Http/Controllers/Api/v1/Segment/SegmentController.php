@@ -66,7 +66,12 @@ class SegmentController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $data = SegmentData::from($request->all());
+            $data = SegmentData::validateAndCreate($request->all());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Spatie\LaravelData\Exceptions\CannotCastEnum $e) {
             return response()->json([
                 'message' => 'Tipo de segmento inválido',
@@ -77,9 +82,14 @@ class SegmentController extends Controller
                 'message' => 'Campos obrigatórios ausentes',
                 'errors' => ['message' => ['Os campos obrigatórios não foram fornecidos.']],
             ], 422);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Erro ao validar dados',
+                'errors' => ['message' => [$e->getMessage()]],
+            ], 422);
         }
 
-        $dataArray = $data->except('id', 'created_at', 'updated_at', 'creator', 'distance_km')->toArray();
+        $dataArray = $data->except('id', 'created_at', 'updated_at', 'distance_km')->toArray();
 
         // Remove Optional instances - convert to null
         $dataArray = array_map(
@@ -128,14 +138,24 @@ class SegmentController extends Controller
 
         try {
             $data = SegmentData::from($request->all());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Spatie\LaravelData\Exceptions\CannotCastEnum $e) {
             return response()->json([
                 'message' => 'Tipo de segmento inválido',
                 'errors' => ['type' => ['O tipo de segmento fornecido não é válido.']],
             ], 422);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Erro ao validar dados',
+                'errors' => ['message' => [$e->getMessage()]],
+            ], 422);
         }
 
-        $dataArray = $data->except('id', 'created_at', 'updated_at', 'creator', 'distance_km')->toArray();
+        $dataArray = $data->except('id', 'created_at', 'updated_at', 'distance_km')->toArray();
 
         // Remove Optional instances - convert to null
         $dataArray = array_map(

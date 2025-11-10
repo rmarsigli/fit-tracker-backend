@@ -12,6 +12,8 @@ use Illuminate\Support\Collection;
 
 class SegmentMatcherService
 {
+    private const MIN_OVERLAP_PERCENTAGE = 90.0;
+
     public function __construct(
         protected GeoQueryService $geoQuery
     ) {}
@@ -21,7 +23,7 @@ class SegmentMatcherService
      *
      * @return Collection<int, SegmentEffort>
      */
-    public function processActivity(Activity $activity, float $minOverlapPercentage = 90.0): Collection
+    public function processActivity(Activity $activity, float $minOverlapPercentage = self::MIN_OVERLAP_PERCENTAGE): Collection
     {
         if (! $activity->route || ! $activity->completed_at) {
             return collect();
@@ -173,17 +175,20 @@ class SegmentMatcherService
     /**
      * Get leaderboard for a specific segment
      *
+     * Uses PostgreSQL DISTINCT ON to efficiently get the fastest effort per user.
+     * This avoids loading all efforts into memory and filtering with ->unique().
+     *
      * @return Collection<int, SegmentEffort>
      */
     public function getLeaderboard(Segment $segment, int $limit = 10): Collection
     {
-        return SegmentEffort::where('segment_id', $segment->id)
+        return SegmentEffort::query()
+            ->selectRaw('DISTINCT ON (user_id) *')
+            ->where('segment_id', $segment->id)
             ->with(['user', 'activity'])
-            ->orderBy('duration_seconds', 'asc')
+            ->orderByRaw('user_id, duration_seconds ASC')
             ->limit($limit)
-            ->get()
-            ->unique('user_id')
-            ->values();
+            ->get();
     }
 
     /**

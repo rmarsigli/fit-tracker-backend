@@ -51,7 +51,12 @@ class ActivityController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $data = ActivityData::from($request->all());
+            $data = ActivityData::validateAndCreate($request->all());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Spatie\LaravelData\Exceptions\CannotCastEnum $e) {
             return response()->json([
                 'message' => 'Tipo de atividade inválido',
@@ -61,6 +66,11 @@ class ActivityController extends Controller
             return response()->json([
                 'message' => 'Campos obrigatórios ausentes',
                 'errors' => ['message' => ['Os campos obrigatórios não foram fornecidos.']],
+            ], 422);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Erro ao validar dados',
+                'errors' => ['message' => [$e->getMessage()]],
             ], 422);
         }
 
@@ -115,20 +125,33 @@ class ActivityController extends Controller
 
         try {
             $data = ActivityData::from($request->all());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Spatie\LaravelData\Exceptions\CannotCastEnum $e) {
             return response()->json([
                 'message' => 'Tipo de atividade inválido',
                 'errors' => ['type' => ['O tipo de atividade fornecido não é válido.']],
             ], 422);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Erro ao validar dados',
+                'errors' => ['message' => [$e->getMessage()]],
+            ], 422);
         }
 
         $dataArray = $data->except('id', 'created_at', 'updated_at', 'distance_km', 'duration_formatted', 'avg_pace_min_km')->toArray();
 
-        // Remove Optional instances but keep nulls
+        // Remove Optional instances - convert to null
         $dataArray = array_map(
             fn ($value) => $value instanceof Optional ? null : $value,
             $dataArray
         );
+
+        // Remove null values for update (only update fields that were provided)
+        $dataArray = array_filter($dataArray, fn ($value) => $value !== null);
 
         $activity->update($dataArray);
 

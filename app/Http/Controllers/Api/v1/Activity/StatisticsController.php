@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1\Activity;
 
+use App\Data\Activity\ActivityData;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Activity\ActivityResource;
 use App\Models\Activity\Activity;
 use App\Services\Activity\StatisticsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\LaravelData\DataCollection;
 
 /**
  * @group Statistics
@@ -83,7 +84,7 @@ class StatisticsController extends Controller
         $activities = $this->statisticsService->getActivityFeed($request->user(), $limit);
 
         return response()->json([
-            'data' => ActivityResource::collection($activities),
+            'data' => ActivityData::collect($activities, DataCollection::class),
             'meta' => [
                 'count' => $activities->count(),
             ],
