@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\v1\Activity\StatisticsController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Challenge\ChallengeController;
 use App\Http\Controllers\Api\v1\Segment\SegmentController;
+use App\Http\Controllers\Api\v1\Segment\SegmentLeaderboardController;
 use App\Http\Controllers\Api\v1\Social\CommentController;
 use App\Http\Controllers\Api\v1\Social\FeedController;
 use App\Http\Controllers\Api\v1\Social\FollowController;
@@ -42,6 +43,13 @@ Route::prefix('v1')->group(function () {
 
         Route::get('segments/nearby', [SegmentController::class, 'nearby']);
         Route::apiResource('segments', SegmentController::class);
+
+        // Segment Leaderboards & Records
+        Route::get('segments/{segment}/leaderboard', [SegmentLeaderboardController::class, 'index']);
+        Route::get('segments/{segment}/kom', [SegmentLeaderboardController::class, 'kom']);
+        Route::get('segments/{segment}/qom', [SegmentLeaderboardController::class, 'qom']);
+        Route::get('me/records', [SegmentLeaderboardController::class, 'userRecords']);
+        Route::get('users/{user}/records', [SegmentLeaderboardController::class, 'userRecords']);
 
         Route::prefix('tracking')->group(function () {
             Route::post('start', [ActivityTrackingController::class, 'start']);

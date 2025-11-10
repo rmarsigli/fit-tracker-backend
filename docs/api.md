@@ -895,6 +895,223 @@ Find segments near a location.
 
 ---
 
+### Get Segment Leaderboard
+
+Get top 20 efforts for a segment, ordered by fastest time.
+
+**Endpoint**: `GET /segments/{segment_id}/leaderboard`
+**Authentication**: Required
+
+**Example**: `GET /segments/1/leaderboard`
+
+**Success Response** (200 OK):
+```json
+{
+  "data": [
+    {
+      "rank": 1,
+      "user": {
+        "id": 5,
+        "name": "Maria Santos",
+        "username": "mariasantos",
+        "avatar": "https://..."
+      },
+      "elapsed_time_seconds": 542.5,
+      "elapsed_time_formatted": "00:09:02",
+      "average_speed_kmh": 18.5,
+      "average_pace_min_km": "03:14",
+      "achieved_at": "2025-11-10T10:30:00Z",
+      "is_kom": true,
+      "is_pr": true
+    },
+    {
+      "rank": 2,
+      "user": {
+        "id": 12,
+        "name": "João Silva",
+        "username": "joaosilva",
+        "avatar": null
+      },
+      "elapsed_time_seconds": 558.2,
+      "elapsed_time_formatted": "00:09:18",
+      "average_speed_kmh": 18.1,
+      "average_pace_min_km": "03:18",
+      "achieved_at": "2025-11-09T15:20:00Z",
+      "is_kom": false,
+      "is_pr": true
+    }
+  ],
+  "segment": {
+    "id": 1,
+    "name": "Ibirapuera Loop",
+    "distance_km": 3.85,
+    "total_efforts": 342
+  }
+}
+```
+
+**Notes**:
+- Shows the best effort for each unique user
+- Limited to top 20 efforts
+- `is_kom` indicates if this is the segment's KOM (King/Queen of Mountain)
+- `is_pr` indicates if this is the user's personal record
+
+---
+
+### Get User Personal Records
+
+Get all segments where user has efforts, showing their best time.
+
+**Endpoint**: `GET /me/records` (authenticated user)
+**Endpoint**: `GET /users/{user_id}/records` (specific user)
+**Authentication**: Required
+
+**Example**: `GET /me/records`
+
+**Success Response** (200 OK):
+```json
+{
+  "data": [
+    {
+      "segment": {
+        "id": 1,
+        "name": "Ibirapuera Loop",
+        "distance_km": 3.85,
+        "type": "run"
+      },
+      "personal_record": {
+        "elapsed_time_seconds": 542.5,
+        "elapsed_time_formatted": "00:09:02",
+        "average_speed_kmh": 18.5,
+        "achieved_at": "2025-11-10T10:30:00Z",
+        "is_kom": true
+      },
+      "rank": 1,
+      "total_attempts": 5
+    },
+    {
+      "segment": {
+        "id": 3,
+        "name": "Paulista Climb",
+        "distance_km": 1.2,
+        "type": "run"
+      },
+      "personal_record": {
+        "elapsed_time_seconds": 312.0,
+        "elapsed_time_formatted": "00:05:12",
+        "average_speed_kmh": 13.8,
+        "achieved_at": "2025-11-08T08:15:00Z",
+        "is_kom": false
+      },
+      "rank": 3,
+      "total_attempts": 8
+    }
+  ],
+  "user": {
+    "id": 5,
+    "name": "Maria Santos",
+    "username": "mariasantos"
+  }
+}
+```
+
+**Notes**:
+- Only returns segments where user has efforts marked as PR (Personal Record)
+- `rank` shows user's position in segment leaderboard
+- `total_attempts` shows how many times user has completed this segment
+
+---
+
+### Get Current KOM
+
+Get the current KOM (King of Mountain) holder for a segment.
+
+**Endpoint**: `GET /segments/{segment_id}/kom`
+**Authentication**: Required
+
+**Example**: `GET /segments/1/kom`
+
+**Success Response** (200 OK):
+```json
+{
+  "data": {
+    "user": {
+      "id": 12,
+      "name": "João Silva",
+      "username": "joaosilva",
+      "avatar": "https://..."
+    },
+    "elapsed_time_seconds": 542.5,
+    "elapsed_time_formatted": "00:09:02",
+    "average_speed_kmh": 18.5,
+    "achieved_at": "2025-11-10T10:30:00Z"
+  },
+  "segment": {
+    "id": 1,
+    "name": "Ibirapuera Loop"
+  }
+}
+```
+
+**No KOM Response** (200 OK):
+```json
+{
+  "data": null,
+  "message": "No KOM recorded for this segment yet"
+}
+```
+
+**Notes**:
+- KOM is the fastest **male** athlete on the segment
+- Returns `null` if no male athletes have completed the segment
+
+---
+
+### Get Current QOM
+
+Get the current QOM (Queen of Mountain) holder for a segment.
+
+**Endpoint**: `GET /segments/{segment_id}/qom`
+**Authentication**: Required
+
+**Example**: `GET /segments/1/qom`
+
+**Success Response** (200 OK):
+```json
+{
+  "data": {
+    "user": {
+      "id": 5,
+      "name": "Maria Santos",
+      "username": "mariasantos",
+      "avatar": "https://..."
+    },
+    "elapsed_time_seconds": 558.2,
+    "elapsed_time_formatted": "00:09:18",
+    "average_speed_kmh": 18.1,
+    "achieved_at": "2025-11-09T15:20:00Z"
+  },
+  "segment": {
+    "id": 1,
+    "name": "Ibirapuera Loop"
+  }
+}
+```
+
+**No QOM Response** (200 OK):
+```json
+{
+  "data": null,
+  "message": "No QOM recorded for this segment yet"
+}
+```
+
+**Notes**:
+- QOM is the fastest **female** athlete on the segment
+- Returns `null` if no female athletes have completed the segment
+
+---
+
 ## Social Features
 
 FitTrack BR includes comprehensive social features to connect users and create an engaging fitness community.
