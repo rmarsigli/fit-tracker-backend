@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v1\Activity\ActivityTrackingController;
 use App\Http\Controllers\Api\v1\Activity\StatisticsController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\v1\Segment\SegmentController;
+use App\Http\Controllers\Api\v1\Social\FollowController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -43,5 +44,10 @@ Route::prefix('v1')->group(function () {
             Route::get('activities/{activity}/splits', [StatisticsController::class, 'activitySplits']);
             Route::get('activities/{activity}/pace-zones', [StatisticsController::class, 'activityPaceZones']);
         });
+
+        Route::post('users/{user}/follow', [FollowController::class, 'follow']);
+        Route::delete('users/{user}/unfollow', [FollowController::class, 'unfollow']);
+        Route::get('users/{user}/followers', [FollowController::class, 'followers']);
+        Route::get('users/{user}/following', [FollowController::class, 'following']);
     });
 });

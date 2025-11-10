@@ -71,4 +71,38 @@ class User extends Authenticatable
     {
         return $this->hasMany(Segment\SegmentEffort::class);
     }
+
+    public function followers(): HasMany
+    {
+        return $this->hasMany(Social\Follow::class, 'following_id');
+    }
+
+    public function following(): HasMany
+    {
+        return $this->hasMany(Social\Follow::class, 'follower_id');
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()
+            ->where('following_id', $user->id)
+            ->exists();
+    }
+
+    public function isFollowedBy(User $user): bool
+    {
+        return $this->followers()
+            ->where('follower_id', $user->id)
+            ->exists();
+    }
+
+    public function followersCount(): int
+    {
+        return $this->followers()->count();
+    }
+
+    public function followingCount(): int
+    {
+        return $this->following()->count();
+    }
 }
