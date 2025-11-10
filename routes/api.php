@@ -12,7 +12,17 @@ use App\Http\Controllers\Api\v1\Social\CommentController;
 use App\Http\Controllers\Api\v1\Social\FeedController;
 use App\Http\Controllers\Api\v1\Social\FollowController;
 use App\Http\Controllers\Api\v1\Social\LikeController;
+use App\Http\Controllers\HealthController;
+use App\Http\Controllers\MetricsController;
 use Illuminate\Support\Facades\Route;
+
+// Health Check Endpoints (no auth required)
+Route::get('health', [HealthController::class, 'index']);
+Route::get('health/ready', [HealthController::class, 'ready']);
+Route::get('health/detailed', [HealthController::class, 'detailed']);
+
+// Metrics Endpoint (no auth for now - add auth in production!)
+Route::get('metrics', [MetricsController::class, 'index']);
 
 Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
