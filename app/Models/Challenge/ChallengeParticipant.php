@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property \Carbon\Carbon|null $completed_at
+ */
 class ChallengeParticipant extends Model
 {
     use HasFactory;
@@ -53,7 +56,9 @@ class ChallengeParticipant extends Model
 
     public function progressPercentage(): float
     {
-        $goal = (float) $this->challenge->goal_value;
+        /** @var Challenge $challenge */
+        $challenge = $this->challenge;
+        $goal = (float) $challenge->goal_value;
 
         if ($goal <= 0) {
             return 0;

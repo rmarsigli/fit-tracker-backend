@@ -29,7 +29,7 @@ class SegmentFactory extends Factory
             'total_attempts' => 0,
             'unique_athletes' => 0,
             'city' => fake()->city(),
-            'state' => fake()->state(),
+            'state' => fake()->randomElement(['California', 'New York', 'Texas', 'Florida', 'Washington', 'Oregon']),
             'is_hazardous' => fake()->boolean(10),
         ];
     }

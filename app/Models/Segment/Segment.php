@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property-read array{type: string, coordinates: array<array<float>>}|null $route
+ */
 class Segment extends Model
 {
     use HasFactory, LogsActivity;

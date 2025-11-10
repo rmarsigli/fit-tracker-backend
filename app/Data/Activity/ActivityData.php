@@ -74,17 +74,17 @@ class ActivityData extends Data
         #[Nullable]
         public ?array $raw_data,
 
-        #[Nullable, Enum(ActivityVisibility::class)]
-        public ActivityVisibility|Optional|null $visibility = null,
-
         #[Required]
         public string|Optional $started_at,
 
-        #[Nullable, AfterOrEqual('started_at')]
-        public ?string $completed_at,
-
         public string|Optional $created_at,
         public string|Optional $updated_at,
+
+        #[Nullable, AfterOrEqual('started_at')]
+        public ?string $completed_at = null,
+
+        #[Nullable, Enum(ActivityVisibility::class)]
+        public ActivityVisibility|Optional|null $visibility = null,
 
         #[Computed]
         public float|Optional|null $distance_km = null,
@@ -106,9 +106,11 @@ class ActivityData extends Data
         $durationFormatted = $durationSeconds ? self::staticFormatDuration($durationSeconds) : Optional::create();
         $avgPaceMinKm = ($avgSpeedKmh && $avgSpeedKmh > 0) ? self::staticCalculatePace($avgSpeedKmh) : Optional::create();
 
+        $type = $activity->type instanceof ActivityType ? $activity->type : ActivityType::from($activity->type);
+
         return new self(
             id: $activity->id,
-            type: $activity->type,
+            type: $type,
             title: $activity->title,
             description: $activity->description,
             distance_meters: $distanceMeters,
@@ -122,14 +124,14 @@ class ActivityData extends Data
             max_heart_rate: $activity->max_heart_rate,
             calories: $activity->calories,
             avg_cadence: $activity->avg_cadence,
-            splits: $activity->splits,
-            weather: $activity->weather,
-            raw_data: $activity->raw_data,
+            splits: is_string($activity->splits) ? json_decode($activity->splits, true) : $activity->splits,
+            weather: is_string($activity->weather) ? json_decode($activity->weather, true) : $activity->weather,
+            raw_data: is_string($activity->raw_data) ? json_decode($activity->raw_data, true) : $activity->raw_data,
+            started_at: $activity->started_at instanceof \Carbon\Carbon ? $activity->started_at->toISOString() : (string) $activity->started_at,
+            created_at: $activity->created_at instanceof \Carbon\Carbon ? $activity->created_at->toISOString() : Optional::create(),
+            updated_at: $activity->updated_at instanceof \Carbon\Carbon ? $activity->updated_at->toISOString() : Optional::create(),
+            completed_at: $activity->completed_at instanceof \Carbon\Carbon ? $activity->completed_at->toISOString() : null,
             visibility: $activity->visibility ?? Optional::create(),
-            started_at: $activity->started_at?->toISOString() ?? '',
-            completed_at: $activity->completed_at?->toISOString(),
-            created_at: $activity->created_at?->toISOString() ?? Optional::create(),
-            updated_at: $activity->updated_at?->toISOString() ?? Optional::create(),
             distance_km: $distanceKm,
             duration_formatted: $durationFormatted,
             avg_pace_min_km: $avgPaceMinKm,

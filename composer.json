@@ -66,6 +66,9 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+        "phpstan": "phpstan analyse --memory-limit=2G",
+        "phpstan:baseline": "phpstan analyse --generate-baseline --memory-limit=2G",
+        "phpstan:clear": "phpstan clear-result-cache",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

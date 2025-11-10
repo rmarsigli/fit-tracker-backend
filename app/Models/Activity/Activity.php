@@ -15,6 +15,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read array{type: string, coordinates: array<array<float>>}|null $route
+ * @property-read array{lat: float, lng: float, alt: float|null}|null $start_point
+ */
 class Activity extends Model
 {
     use HasFactory, SoftDeletes;

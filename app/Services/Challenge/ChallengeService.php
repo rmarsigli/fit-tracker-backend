@@ -58,6 +58,7 @@ class ChallengeService
 
     public function updateProgress(ChallengeParticipant $participant, Activity $activity): void
     {
+        /** @var Challenge $challenge */
         $challenge = $participant->challenge;
 
         if ($challenge->isEnded()) {
@@ -68,6 +69,7 @@ class ChallengeService
             ChallengeType::Distance => $activity->distance_meters / 1000,
             ChallengeType::Duration => $activity->moving_time_seconds / 3600,
             ChallengeType::Elevation => $activity->elevation_gain ?? 0,
+            default => 0,
         };
 
         $newProgress = $participant->current_progress + $progressIncrement;
@@ -130,7 +132,9 @@ class ChallengeService
 
     public function recalculateProgress(ChallengeParticipant $participant): void
     {
+        /** @var Challenge $challenge */
         $challenge = $participant->challenge;
+        /** @var User $user */
         $user = $participant->user;
 
         $activities = Activity::query()
@@ -143,6 +147,7 @@ class ChallengeService
             ChallengeType::Distance => $activity->distance_meters / 1000,
             ChallengeType::Duration => $activity->moving_time_seconds / 3600,
             ChallengeType::Elevation => $activity->elevation_gain ?? 0,
+            default => 0,
         });
 
         $participant->current_progress = $totalProgress;

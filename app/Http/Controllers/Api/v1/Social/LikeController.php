@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\v1\Social;
 use App\Http\Controllers\Controller;
 use App\Models\Activity\Activity;
 use App\Models\Social\Like;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
 class LikeController extends Controller
@@ -48,16 +49,22 @@ class LikeController extends Controller
             ->latest()
             ->paginate(50);
 
+        /** @var \Illuminate\Pagination\LengthAwarePaginator<Like> $likes */
         return response()->json([
-            'data' => $likes->map(fn ($like) => [
-                'id' => $like->id,
-                'user' => [
-                    'id' => $like->user->id,
-                    'name' => $like->user->name,
-                    'username' => $like->user->username,
-                ],
-                'created_at' => $like->created_at->toISOString(),
-            ]),
+            'data' => $likes->map(function (Like $like) {
+                /** @var User $user */
+                $user = $like->user;
+
+                return [
+                    'id' => $like->id,
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'username' => $user->username,
+                    ],
+                    'created_at' => $like->created_at->toISOString(),
+                ];
+            }),
             'meta' => [
                 'current_page' => $likes->currentPage(),
                 'last_page' => $likes->lastPage(),

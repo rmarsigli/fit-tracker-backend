@@ -19,7 +19,7 @@ class StatisticsService
 
     public function calculateSplits(Activity $activity): array
     {
-        if (! $activity->raw_data || ! isset($activity->raw_data['points'])) {
+        if ($activity->raw_data === null || ! is_array($activity->raw_data) || ! isset($activity->raw_data['points'])) {
             return [];
         }
 

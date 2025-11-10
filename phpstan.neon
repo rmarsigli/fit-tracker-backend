@@ -1,0 +1,29 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    treatPhpDocTypesAsCertain: false
+
+    paths:
+        - app
+        - config
+        - database
+        - routes
+
+    # Exclude paths
+    excludePaths:
+        - database/migrations/*.php
+        - database/seeders/*.php
+        - app/Console/Commands/ValidateConfig.php  # Must use env() directly
+
+    # Laravel-specific
+    noUnnecessaryCollectionCall: true
+    checkModelProperties: true
+    checkOctaneCompatibility: true
+
+    # Report unused
+    reportUnmatchedIgnoredErrors: false
+
+    # Treat PHP 8.4 correctly
+    phpVersion: 80400

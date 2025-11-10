@@ -23,7 +23,7 @@ class PostGISService
     /**
      * Convert an array of points to PostGIS LINESTRING format
      *
-     * @param  array<int, array{latitude: float, longitude: float, altitude?: float}>  $points
+     * @param  array<int, array{latitude?: float, longitude?: float, altitude?: float}>  $points
      */
     public function makeLineString(array $points): string
     {

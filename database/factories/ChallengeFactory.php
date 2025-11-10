@@ -28,6 +28,7 @@ class ChallengeFactory extends Factory
                 ChallengeType::Distance => fake()->randomFloat(2, 10, 500),
                 ChallengeType::Duration => fake()->randomFloat(2, 5, 100),
                 ChallengeType::Elevation => fake()->randomFloat(2, 100, 5000),
+                default => 100.0,
             },
             'goal_unit' => $type->unit(),
             'starts_at' => $startsAt,

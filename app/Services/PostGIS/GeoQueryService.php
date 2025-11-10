@@ -179,14 +179,21 @@ class GeoQueryService
             ->get();
 
         return $segments->map(function (Segment $segment) use ($activity, $minOverlapPercentage) {
-            $intersection = $this->postGIS->getIntersection($activity->route, $segment->route);
+            $activityRouteEWKT = $this->convertGeoJSONToEWKT($activity->route);
+            $segmentRouteEWKT = $this->convertGeoJSONToEWKT($segment->route);
+
+            if (! $activityRouteEWKT || ! $segmentRouteEWKT) {
+                return null;
+            }
+
+            $intersection = $this->postGIS->getIntersection($activityRouteEWKT, $segmentRouteEWKT);
 
             if (! $intersection) {
                 return null;
             }
 
             $intersectionLength = $this->postGIS->length($intersection);
-            $segmentLength = $this->postGIS->length($segment->route);
+            $segmentLength = $this->postGIS->length($segmentRouteEWKT);
 
             $overlapPercentage = $segmentLength > 0
                 ? ($intersectionLength / $segmentLength) * 100
@@ -235,14 +242,20 @@ class GeoQueryService
             return null;
         }
 
-        $point1 = $this->postGIS->extractPoint($activity1->start_point);
-        $point2 = $this->postGIS->extractPoint($activity2->start_point);
+        // start_point can be either array {lat, lng, alt?} or string (EWKT)
+        $point1 = is_array($activity1->start_point)
+            ? $activity1->start_point
+            : $this->postGIS->extractPoint($activity1->start_point);
+
+        $point2 = is_array($activity2->start_point)
+            ? $activity2->start_point
+            : $this->postGIS->extractPoint($activity2->start_point);
 
         return $this->postGIS->calculateDistance(
-            $point1['latitude'],
-            $point1['longitude'],
-            $point2['latitude'],
-            $point2['longitude']
+            $point1['lat'] ?? $point1['latitude'],
+            $point1['lng'] ?? $point1['longitude'],
+            $point2['lat'] ?? $point2['latitude'],
+            $point2['lng'] ?? $point2['longitude']
         );
     }
 
@@ -370,5 +383,47 @@ class GeoQueryService
             ) {$direction}",
             [$point]
         );
+    }
+
+    /**
+     * Convert GeoJSON array to EWKT string
+     *
+     * @param  array{type: string, coordinates: array<array<float>>}|string|null  $geoJSON
+     */
+    private function convertGeoJSONToEWKT(array|string|null $geoJSON): ?string
+    {
+        // If it's already a string (EWKT), return it
+        if (is_string($geoJSON)) {
+            return $geoJSON;
+        }
+
+        if (! $geoJSON || ! isset($geoJSON['coordinates']) || ! is_array($geoJSON['coordinates'])) {
+            return null;
+        }
+
+        $coordinates = $geoJSON['coordinates'];
+        $points = [];
+
+        foreach ($coordinates as $coord) {
+            if (! is_array($coord) || count($coord) < 2) {
+                continue;
+            }
+            // GeoJSON is [lng, lat, alt?], PostGIS EWKT is "lng lat alt"
+            $lng = $coord[0];
+            $lat = $coord[1];
+            $alt = $coord[2] ?? null;
+
+            if ($alt !== null) {
+                $points[] = sprintf('%f %f %f', $lng, $lat, $alt);
+            } else {
+                $points[] = sprintf('%f %f', $lng, $lat);
+            }
+        }
+
+        if (empty($points)) {
+            return null;
+        }
+
+        return sprintf('SRID=4326;LINESTRING(%s)', implode(',', $points));
     }
 }

@@ -54,17 +54,17 @@ class SegmentData extends Data
         #[Nullable, IntegerType]
         public int|Optional|null $unique_athletes = null,
 
-        #[Nullable]
-        public ?string $city,
+        public string|Optional $created_at = '',
+        public string|Optional $updated_at = '',
 
         #[Nullable]
-        public ?string $state,
+        public ?string $city = null,
+
+        #[Nullable]
+        public ?string $state = null,
 
         #[Nullable, BooleanType]
         public bool|Optional|null $is_hazardous = null,
-
-        public string|Optional $created_at,
-        public string|Optional $updated_at,
 
         #[Computed]
         public UserData|Optional|null $creator = null,
@@ -76,9 +76,9 @@ class SegmentData extends Data
     public static function fromModel(Segment $segment): self
     {
         $distanceMeters = $segment->distance_meters ?? Optional::create();
-        $distanceKm = is_float($distanceMeters) || is_int($distanceMeters)
-            ? round($distanceMeters / 1000, 2)
-            : Optional::create();
+        $distanceKm = ($distanceMeters instanceof Optional)
+            ? Optional::create()
+            : round($distanceMeters / 1000, 2);
 
         $creator = $segment->relationLoaded('creator') && $segment->creator
             ? UserData::from($segment->creator)

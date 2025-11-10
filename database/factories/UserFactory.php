@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'weight_kg' => fake()->optional()->randomFloat(2, 50, 120),
             'height_cm' => fake()->optional()->randomFloat(2, 150, 210),
             'city' => fake()->optional()->city(),
-            'state' => fake()->optional()->state(),
+            'state' => fake()->optional()->randomElement(['California', 'New York', 'Texas', 'Florida', 'Washington', 'Oregon']),
             'preferences' => [
                 'units' => fake()->randomElement(['metric', 'imperial']),
                 'privacy' => fake()->randomElement(['public', 'followers', 'private']),
