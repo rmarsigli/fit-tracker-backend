@@ -4,408 +4,284 @@
 [![PHPStan Level 5](https://img.shields.io/badge/PHPStan-level%205-brightgreen.svg?style=flat-square)](https://phpstan.org/)
 [![Code Style](https://img.shields.io/badge/code%20style-pint-orange.svg?style=flat-square)](https://laravel.com/docs/pint)
 [![PHP 8.4](https://img.shields.io/badge/PHP-8.4-777BB4.svg?style=flat-square&logo=php)](https://www.php.net/)
-[![Laravel 12](https://img.shields.io/badge/Laravel-12-FF2D20.svg?style=flat-square&logo=laravel)](https://laravel.com)
-[![Tests](https://img.shields.io/badge/tests-220%20passing-brightgreen.svg?style=flat-square)](https://pestphp.com/)
-[![Quality Score](https://img.shields.io/badge/quality-100%2F100-brightgreen.svg?style=flat-square)](https://github.com/rmarsigli/fit-tracker-backend)
+[![Laravel 12](https://img.shields.io/badge/Laravel-12-FF2D20.svg?style=flat-square&logo=laravel)](https://laravel.com) 
 
-A fitness tracking platform API built with Laravel 12 and PostgreSQL + PostGIS, designed for the Brazilian market.
+**A fitness tracking API built for Brazilian athletes.** Track runs, rides, and workouts with GPS precision, compete on segments, and connect with your fitness community.
 
-## Overview
+---
 
-A comprehensive fitness tracking application similar to Strava, allowing users to track their running, cycling, and other athletic activities with GPS data, compete on segments, participate in challenges, and connect with other athletes.
+## What is Runner App?
 
-## Features (MVP)
+FitTrack BR is a comprehensive fitness tracking platform designed for the Brazilian market. Think Strava, but built from the ground up with modern Laravel architecture and powerful spatial features.
 
-### Completed ✅
-- **User Authentication** - Registration, login, and profile management with Laravel Sanctum
-- **Activity Tracking** - Real-time GPS tracking with distance, speed, elevation, and heart rate monitoring
-- **Activity CRUD** - Complete create, read, update, delete operations
-- **Statistics & Analytics** - Splits, pace zones, user aggregations, activity feed
-- **Segments & Detection** - Create route segments with automatic detection and matching
-- **Leaderboards** - KOM/QOM tracking, personal records, rankings (service layer ready)
-- **Geolocation** - PostGIS-powered spatial queries for nearby activities and segments
+**What you can do**:
+- 🏃 Track activities with real-time GPS, heart rate, and elevation
+- 🗺️ Create and compete on route segments (like Strava's KOMs)
+- 📊 Analyze performance with splits, pace zones, and detailed statistics
+- 👥 Follow friends, give kudos, and comment on activities
+- 🏆 Join distance and elevation challenges
+- 🌍 Discover nearby activities and popular routes
 
-### In Progress 🔄
-- **Social Features** - Follow system, kudos, comments, feeds
-- **Challenges** - Distance, duration, and elevation challenges
+---
+
+## Quick Start
+
+Get up and running in under 5 minutes:
+
+```bash
+# 1. Clone and install
+git clone <repository-url>
+cd runner/backend
+composer install
+
+# 2. Setup environment
+cp .env.example .env
+php artisan key:generate
+
+# 3. Configure database (PostgreSQL with PostGIS required)
+# Edit .env with your database credentials
+
+# 4. Enable PostGIS extension
+psql your_database -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+
+# 5. Run migrations
+php artisan migrate
+
+# 6. Start server
+php artisan serve
+
+# 🎉 API is now running at http://localhost:8000/api/v1
+```
+
+**Next steps**: See [docs/onboarding.md](docs/onboarding.md) for detailed setup and [docs/api.md](docs/api.md) for API documentation.
+
+---
 
 ## Tech Stack
 
-### Core
-- **PHP** 8.4
-- **Laravel** 12.37 (LTS)
-- **PostgreSQL** 16 with PostGIS 3.4
-- **Redis** 7.2 for caching and real-time tracking
+**Core**:
+- PHP 8.4 + Laravel 12 (latest LTS)
+- PostgreSQL 16 + PostGIS 3.4 (spatial features)
+- Redis 7.2 (caching and real-time tracking)
 
-### Key Packages
-- `laravel/sanctum` v4 - API authentication
-- `spatie/laravel-data` v4 - DTOs for validation & transformation
-- `laravel/cashier` v16 - Payment processing (future)
-- `pestphp/pest` v4 - Testing framework with browser support
+**Key Features**:
+- Modern architecture with Data classes and ValueObjects
+- Native PostGIS integration (no third-party packages)
+- Real-time GPS tracking with Redis
+- Background segment detection with queues
+- Comprehensive testing (236 tests passing)
+- PHPStan Level 5 (strict type safety)
+- Automated CI/CD with GitHub Actions
 
-### Testing
-- **220 tests passing** (689 assertions) ✅
-- Pest 4 with Laravel plugin
-- Feature, unit, and browser testing support
-- Comprehensive test coverage
+---
 
-## Architecture Highlights
+## What's Included
 
-- **Native PostGIS Integration** - Custom SQL helpers for spatial queries (no third-party packages)
-- **Data Classes + ValueObjects** - Modern architecture with Spatie Laravel Data
-  - `Distance`, `Duration`, `Pace`, `Speed`, `HeartRate`, `Elevation`, `Coordinates`
-  - Unified validation + transformation + API responses
-- **Real-time Tracking** - Redis-based temporary storage (2h TTL) for active GPS tracking
-- **Background Processing** - Queue jobs for segment detection and stats calculation
-- **API Versioning** - Routes organized under `/api/v1/`
-- **Smart File Organization** - Domain-driven folder structure
-- **Type Safety** - Strict types, enums, and ValueObjects throughout
+### Core Features
+
+**Authentication & Users**
+- Registration, login, and profile management
+- Token-based authentication (Laravel Sanctum)
+
+**Activity Tracking**
+- Real-time GPS tracking with pause/resume
+- Distance, speed, elevation, and heart rate monitoring
+- Complete CRUD operations for activities
+
+**Statistics & Analytics**
+- Per-kilometer splits
+- Pace zone analysis
+- User aggregations and activity feed
+
+**Segments & Leaderboards**
+- Create custom route segments
+- Automatic segment detection using PostGIS
+- KOM/QOM (King/Queen of Mountain) tracking
+- Personal records and rankings
+
+**Social Features**
+- Follow system
+- Kudos (activity likes)
+- Comments and activity feed
+
+**Challenges**
+- Distance, duration, and elevation challenges
+- Progress tracking and leaderboards
+
+---
+
+## API Documentation
+
+**36 REST endpoints** organized under `/api/v1/`:
+
+- **Authentication**: `/auth/*` (register, login, logout)
+- **Activities**: `/activities/*` (CRUD, list, search)
+- **Tracking**: `/tracking/*` (start, track, pause, resume, finish)
+- **Statistics**: `/statistics/*` (user stats, splits, pace zones)
+- **Segments**: `/segments/*` (CRUD, nearby search, leaderboards)
+- **Social**: Follow, kudos, comments, feed
+- **Challenges**: Create, join, progress tracking
+
+**Full API documentation**: [docs/api.md](docs/api.md)
+
+**Postman Collection**: Import `docs/postman-collection.json` for quick testing with pre-configured requests.
+
+---
+
+## Database Schema
+
+**Main tables**:
+- `users` - User accounts with spatial location
+- `activities` - GPS-tracked activities with routes (PostGIS LineString)
+- `segments` - Route segments for competition
+- `segment_efforts` - Individual attempts on segments
+- `follows` - User follow relationships
+- `kudos` - Activity likes
+- `comments` - Activity comments
+- `challenges` - Distance/duration challenges
+
+**PostGIS spatial columns**: Activities and segments store GPS routes as LineStrings with seven GIST indexes for optimal spatial query performance.
+
+---
+
+## Development
+
+### Running Tests
+
+```bash
+# Run all tests (236 tests, 866 assertions)
+php artisan test
+
+# Run specific test file
+php artisan test tests/Feature/Api/v1/Activity/ActivityCrudTest.php
+
+# Run with filter
+php artisan test --filter=ActivityTracking
+```
+
+### Code Quality
+
+This project maintains production-grade code quality:
+
+```bash
+# Format code (Laravel Pint)
+vendor/bin/pint
+
+# Static analysis (PHPStan Level 5)
+composer phpstan
+
+# Security audit
+composer audit
+```
+
+**Standards**:
+- Strict types in all PHP files
+- PHPStan Level 5 (zero errors, zero suppressions)
+- PSR-12 code style
+- All tests passing before merge
+- Automated CI/CD checks
+
+---
 
 ## Project Structure
 
 ```
 app/
-├── Data/                 # DTOs (Spatie Laravel Data) - replaces Form Requests + Resources
-│   ├── Auth/
-│   ├── Activity/
-│   ├── Segment/
-│   └── User/
-├── ValueObjects/         # Immutable domain values with behavior
-│   ├── Common/           # Distance, Duration
-│   ├── Activity/         # Speed, Pace, HeartRate, Elevation
-│   └── Geo/              # Coordinates (with Haversine distance)
-├── Enums/                # Type-safe enumerations
-│   ├── Activity/         # ActivityType, ActivityVisibility
-│   └── Segment/          # SegmentType
-├── Http/
-│   ├── Controllers/Api/v1/  # API v1 controllers
-│   ├── Requests/         # Form requests (being replaced by Data classes)
-│   └── Resources/        # API resources (being replaced by Data classes)
-├── Models/               # Eloquent models (organized by domain)
-│   ├── Activity/
-│   ├── Segment/
-│   └── User.php
-├── Services/             # Business logic services
-│   ├── Activity/         # ActivityTrackingService, StatisticsService
-│   ├── PostGIS/          # PostGISService, GeoQueryService
-│   └── Segment/          # SegmentMatcherService
-└── Jobs/                 # Queue jobs
-    └── ProcessSegmentEfforts.php
+├── Data/              # DTOs with validation (Spatie Laravel Data)
+├── ValueObjects/      # Immutable domain values (Distance, Duration, Pace)
+├── Enums/             # Type-safe enumerations
+├── Http/Controllers/  # API v1 controllers
+├── Models/            # Eloquent models (organized by domain)
+├── Services/          # Business logic (ActivityTracking, SegmentMatcher)
+└── Jobs/              # Queue jobs (segment detection)
 
 database/
-├── migrations/           # Database schema migrations
-├── factories/            # Model factories for testing
-└── seeders/              # Database seeders
+├── migrations/        # Database schema
+├── factories/         # Model factories for testing
+└── seeders/           # Database seeders
 
 tests/
-├── Feature/              # Feature tests (API endpoints)
-│   ├── Api/v1/
-│   └── Services/
-└── Unit/                 # Unit tests (future)
+├── Feature/           # API endpoint tests
+└── Unit/              # Unit tests
 
 docs/
-├── api.md                # Complete API documentation
-└── postman-collection.json  # Postman collection for testing
+├── api.md             # Complete API documentation
+├── onboarding.md      # New developer guide
+├── architecture.md    # System architecture overview
+└── contributing.md    # Development guidelines
 ```
 
-## Database Schema (MVP)
+---
 
-**Core Tables:**
-- `users` - User accounts with spatial location (Point)
-- `activities` - GPS-tracked activities with routes (LineString)
-- `segments` - Route segments for competition (LineString)
-- `segment_efforts` - Individual attempts on segments with KOM/PR tracking
-- `follows` - User follow relationships (future)
-- `kudos` - Activity likes (future)
-- `comments` - Activity comments (future)
-- `challenges` - Distance/duration/elevation challenges (future)
+## Architecture Highlights
 
-**PostGIS Spatial Columns:**
-- Activities: `route` (LineString), `start_point` (Point), `end_point` (Point)
-- Segments: `route` (LineString), `start_point` (Point), `end_point` (Point)
-- Users: `location` (Point)
+**Modern Laravel Architecture**:
+- Data classes for DTOs (replaces Form Requests + API Resources)
+- ValueObjects for domain concepts (Distance, Duration, Pace, Speed)
+- Strong typing throughout (PHP 8.4 features plus PHPStan Level 5)
+- Smart file organization (domain-driven structure)
 
-**Indexes:**
-- 7 GIST spatial indexes for optimal PostGIS query performance
-- Composite indexes for common queries
+**PostGIS Integration**:
+- Custom SQL helpers for spatial queries
+- No third-party packages needed
+- Seven GIST indexes for performance
+- Efficient segment detection using spatial intersections
 
-## Installation
+**Real-time Tracking**:
+- Redis-based temporary storage (2h TTL)
+- Background processing with queues
+- Automatic segment detection on activity completion
 
-### Prerequisites
-- PHP 8.4+
-- PostgreSQL 16+ with PostGIS 3.4
-- Redis 7.2+
-- Composer 2.x
-- Node.js & pnpm (for asset compilation)
+**For more details**: See [docs/architecture.md](docs/architecture.md)
 
-### Setup
+---
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd runner/backend
-   ```
+## Requirements
 
-2. **Install dependencies**
-   ```bash
-   composer install
-   pnpm install
-   ```
+- PHP 8.4 or higher
+- PostgreSQL 16+ with PostGIS 3.4 extension
+- Redis 7.2+ for caching and queues
+- Composer 2.x for PHP dependencies
 
-3. **Environment configuration**
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
+---
 
-4. **Configure database**
+## Production Ready
 
-   Edit `.env` with your PostgreSQL credentials:
-   ```env
-   DB_CONNECTION=pgsql
-   DB_HOST=127.0.0.1
-   DB_PORT=5432
-   DB_DATABASE=fittrack
-   DB_USERNAME=your_username
-   DB_PASSWORD=your_password
-   ```
+This application is **production-ready** with:
 
-5. **Enable PostGIS extension**
+- ✅ 236 tests passing (866 assertions)
+- ✅ PHPStan Level 5 - zero errors
+- ✅ Zero security vulnerabilities
+- ✅ Health checks and metrics endpoints
+- ✅ Error monitoring (Sentry integration)
+- ✅ Automated CI/CD pipeline
+- ✅ Comprehensive documentation
 
-   Connect to your PostgreSQL database and run:
-   ```sql
-   CREATE EXTENSION IF NOT EXISTS postgis;
-   CREATE EXTENSION IF NOT EXISTS postgis_topology;
-   ```
+**Deployment guide**: See [docs/deployment.md](docs/deployment.md) (coming soon)
 
-6. **Run migrations**
-   ```bash
-   php artisan migrate
-   ```
-
-7. **Seed database (optional)**
-   ```bash
-   php artisan db:seed
-   ```
-   Creates: 11 users, 100 activities, 20 segments, 69 segment efforts
-
-8. **Start development server**
-   ```bash
-   php artisan serve
-   ```
-
-9. **Access API**
-   ```
-   http://localhost:8000/api/v1
-   ```
-
-## Testing
-
-Run the full test suite:
-```bash
-php artisan test
-```
-
-Run specific test file:
-```bash
-php artisan test tests/Feature/Api/v1/Activity/ActivityCrudTest.php
-```
-
-Run with filter:
-```bash
-php artisan test --filter=ActivityTracking
-```
-
-Current status: **220 tests passing** (689 assertions) ✅
-
-## Code Quality
-
-This project maintains world-class code quality standards:
-
-### Code Style
-- **Laravel Pint** - PSR-12 compliant code formatting
-- **Strong typing** - All methods have return type declarations
-- **Strict types** - `declare(strict_types=1)` in all PHP files
-- **PHP 8.4 features** - Constructor property promotion, readonly properties, enums
-- **Data classes** - Spatie Laravel Data for DTOs (validation + transformation + responses)
-- **ValueObjects** - Immutable domain values (Distance, Duration, Pace, etc.)
-- **No inline comments** - PHPDoc only when necessary
-- **Pest syntax** - All tests written in Pest 4
-
-### Static Analysis
-- **PHPStan Level 5** - Comprehensive type safety checks
-- **0 errors** - All code passes strict static analysis
-- **No suppressions** - No `@phpstan-ignore` comments used
-
-### Quality Checks
-
-Format code with Laravel Pint:
-```bash
-vendor/bin/pint
-```
-
-Run PHPStan static analysis:
-```bash
-composer phpstan
-```
-
-Run security audit:
-```bash
-composer audit
-```
-
-## CI/CD
-
-All code quality checks are automated via GitHub Actions on every push and pull request:
-
-### Automated Checks
-- ✅ **Tests** - All 220 tests must pass
-- ✅ **Code Quality** - Pint formatting + PHPStan Level 5
-- ✅ **Security** - Composer audit for vulnerabilities
-
-### Services in CI
-- PostgreSQL 16 + PostGIS 3.4
-- Redis 7.2
-- PHP 8.4 with required extensions
-
-The CI/CD pipeline ensures consistent code quality and prevents regressions. All checks must pass before code can be merged.
-
-## API Documentation
-
-Complete API documentation available in **`docs/api.md`**
-
-### Endpoints (31 total)
-
-**Authentication** (`/api/v1/auth/*`):
-- POST `/register` - Create account
-- POST `/login` - Authenticate
-- GET `/me` - Current user
-- POST `/logout` - Revoke token
-
-**Activities** (`/api/v1/activities/*`):
-- GET `/activities` - List user's activities
-- POST `/activities` - Create activity
-- GET `/activities/{id}` - Show activity
-- PATCH `/activities/{id}` - Update activity
-- DELETE `/activities/{id}` - Delete activity
-
-**Activity Tracking** (`/api/v1/tracking/*`):
-- POST `/tracking/start` - Start tracking
-- POST `/tracking/{id}/track` - Add GPS point
-- POST `/tracking/{id}/pause` - Pause tracking
-- POST `/tracking/{id}/resume` - Resume tracking
-- GET `/tracking/{id}/status` - Get status
-- POST `/tracking/{id}/finish` - Finish & save
-
-**Statistics** (`/api/v1/statistics/*`):
-- GET `/statistics/me` - User stats
-- GET `/statistics/feed` - Activity feed
-- GET `/statistics/activities/{id}/splits` - Per-km splits
-- GET `/statistics/activities/{id}/pace-zones` - Pace zones
-
-**Segments** (`/api/v1/segments/*`):
-- GET `/segments` - List segments
-- POST `/segments` - Create segment
-- GET `/segments/{id}` - Show segment
-- PATCH `/segments/{id}` - Update segment
-- DELETE `/segments/{id}` - Delete segment
-- GET `/segments/nearby` - Find nearby segments
-
-### Postman Collection
-
-Import **`docs/postman-collection.json`** into Postman for quick API testing.
-
-Features:
-- All 31 endpoints pre-configured
-- Auto-save authentication token
-- Auto-save tracking ID
-- Example request bodies
-- Collection variables for base URL
-
-## Development Status
-
-**Project Status**: ✅ **PRODUCTION READY** - 100/100 Quality Score 🏆
-
-### Completed SCRUMs
-
-- ✅ **SCRUM 1** - Foundation & Database Setup
-- ✅ **SCRUM 2** - Activities Core Features
-- ✅ **SCRUM 3** - Geolocation & Segments
-- ✅ **SCRUM 4** - Social Features (Follow, Kudos, Comments, Feed)
-- ✅ **SCRUM 5** - Challenges System
-- ✅ **SCRUM 6** - Production Readiness
-  - Sprint 6.1: Security & Error Tracking (Sentry, Audit Logging)
-  - Sprint 6.2: Architecture Refinement (Data Classes Migration)
-  - Sprint 6.3: Performance & Resilience
-  - Sprint 6.4: Monitoring & Observability (Health Checks, Metrics)
-- ✅ **SCRUM 7** - PHPStan Level 5 Static Analysis
-  - World-class type safety
-  - Zero errors, zero suppressions
-  - 94 files analyzed
-- ✅ **SCRUM 8** - CI/CD Automation (Current)
-
-### Quality Metrics
-
-| Metric | Score |
-|--------|-------|
-| Code Quality | 100/100 🏆 |
-| Security | 90/100 |
-| Performance | 96/100 |
-| Tests Coverage | 90/100 |
-| Documentation | 95/100 |
-| **Overall** | **100/100** ✅ |
-
-See `.claude/current-sprint.md` for detailed sprint planning and `.claude/completed/` for completed sprint documentation.
-
-## Architecture Decisions
-
-Key architectural decisions documented in `.claude/decisions/` and `.claude/completed/`:
-
-- **ADR-001**: PostGIS Native (no packages)
-- **ADR-002**: Real-time Tracking with Redis
-- **ADR-003**: API Versioning Strategy
-- **ADR-004**: Validation via Form Requests
-- **ADR-005**: Smart Files Organization
-- **ADR-006**: Testing with Pest 4
-- **ADR-007**: Segment Detection Strategy
-- **ADR-008**: Enums Directory Structure
-- **ADR-009**: Data Classes & ValueObjects Architecture ⭐
-- **ADR-010**: PHPStan Level 5 Static Analysis ⭐
-- **ADR-011**: CI/CD with GitHub Actions ⭐
-
-## Future Features (Post-MVP)
-
-### Phase 2 - B2B Features
-- Training plans for coaches
-- Athlete-coach relationship management
-- Workout scheduling and tracking
-
-### Phase 3 - Social Expansion
-- Clubs and group activities
-- Club challenges and leaderboards
-- Group events
-
-### Phase 4 - Integrations
-- Strava/Garmin OAuth and import
-- GPX/TCX/FIT file import/export
-- Wearable device integrations
-
-### Phase 5 - Premium
-- Payment integration (Stripe)
-- Subscription management
-- Premium features
-
-### Phase 6 - Advanced
-- Push notifications
-- Heat maps generation
-- Route builder
-- Advanced analytics
-- Weather integration
+---
 
 ## Contributing
 
-This is a private project. See sprint documentation in `.claude/` for development workflow.
+See [docs/contributing.md](docs/contributing.md) for:
+- Development workflow
+- Testing requirements
+- Code standards
+- Pull request process
+
+---
 
 ## License
 
 Proprietary - All rights reserved
+
+---
+
+## Support
+
+For questions or issues:
+- Read the docs in `/docs`
+- Check existing GitHub issues
+- Contact the development team
+
+**New to the project?** Start with [docs/onboarding.md](docs/onboarding.md) for a complete setup guide.
