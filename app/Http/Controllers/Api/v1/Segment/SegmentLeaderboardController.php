@@ -34,8 +34,8 @@ class SegmentLeaderboardController extends Controller
 
         $data = $leaderboard->map(
             /**
-             * @param \App\Models\Segment\SegmentEffort $effort
-             * @param int $index
+             * @param  \App\Models\Segment\SegmentEffort  $effort
+             * @param  int  $index
              * @return array{rank: int, user: array{id: int, name: string, username: string, avatar: string|null}, elapsed_time_seconds: float, elapsed_time_formatted: string, average_speed_kmh: float, average_pace_min_km: string|null, achieved_at: string|null, is_kom: bool, is_pr: bool}
              */
             function (mixed $effort, mixed $index): array {
@@ -45,24 +45,24 @@ class SegmentLeaderboardController extends Controller
                 /** @var \Illuminate\Support\Carbon|null $achievedAt */
                 $achievedAt = $effort->achieved_at;
 
-            return [
-                'rank' => $index + 1,
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'username' => $user->username,
-                    'avatar' => $user->avatar,
-                ],
-                'elapsed_time_seconds' => $effort->duration_seconds,
-                'elapsed_time_formatted' => gmdate('H:i:s', (int) $effort->duration_seconds),
-                'average_speed_kmh' => round($effort->avg_speed_kmh, 2),
-                'average_pace_min_km' => $effort->avg_speed_kmh > 0
-                    ? gmdate('i:s', (int) (60 / $effort->avg_speed_kmh))
-                    : null,
-                'achieved_at' => $achievedAt !== null ? $achievedAt->toISOString() : null,
-                'is_kom' => $effort->is_kom,
-                'is_pr' => $effort->is_pr,
-            ];
+                return [
+                    'rank' => $index + 1,
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'username' => $user->username,
+                        'avatar' => $user->avatar,
+                    ],
+                    'elapsed_time_seconds' => $effort->duration_seconds,
+                    'elapsed_time_formatted' => gmdate('H:i:s', (int) $effort->duration_seconds),
+                    'average_speed_kmh' => round($effort->avg_speed_kmh, 2),
+                    'average_pace_min_km' => $effort->avg_speed_kmh > 0
+                        ? gmdate('i:s', (int) (60 / $effort->avg_speed_kmh))
+                        : null,
+                    'achieved_at' => $achievedAt !== null ? $achievedAt->toISOString() : null,
+                    'is_kom' => $effort->is_kom,
+                    'is_pr' => $effort->is_pr,
+                ];
             }
         );
 
@@ -95,7 +95,7 @@ class SegmentLeaderboardController extends Controller
 
         $data = $records->map(
             /**
-             * @param \App\Models\Segment\SegmentEffort $effort
+             * @param  \App\Models\Segment\SegmentEffort  $effort
              * @return array<string, mixed>
              */
             function (mixed $effort): array {
