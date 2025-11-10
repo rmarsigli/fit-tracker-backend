@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\v1\Activity\ActivityController;
 use App\Http\Controllers\Api\v1\Activity\ActivityTrackingController;
 use App\Http\Controllers\Api\v1\Activity\StatisticsController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Challenge\ChallengeController;
 use App\Http\Controllers\Api\v1\Segment\SegmentController;
 use App\Http\Controllers\Api\v1\Social\CommentController;
 use App\Http\Controllers\Api\v1\Social\FeedController;
@@ -64,6 +65,19 @@ Route::prefix('v1')->group(function () {
             Route::get('following', [FeedController::class, 'following']);
             Route::get('nearby', [FeedController::class, 'nearby']);
             Route::get('trending', [FeedController::class, 'trending']);
+        });
+
+        Route::prefix('challenges')->group(function () {
+            Route::get('/', [ChallengeController::class, 'index']);
+            Route::post('/', [ChallengeController::class, 'store']);
+            Route::get('my', [ChallengeController::class, 'myChallenges']);
+            Route::get('available', [ChallengeController::class, 'available']);
+            Route::get('{challenge}', [ChallengeController::class, 'show']);
+            Route::put('{challenge}', [ChallengeController::class, 'update']);
+            Route::delete('{challenge}', [ChallengeController::class, 'destroy']);
+            Route::post('{challenge}/join', [ChallengeController::class, 'join']);
+            Route::delete('{challenge}/leave', [ChallengeController::class, 'leave']);
+            Route::get('{challenge}/leaderboard', [ChallengeController::class, 'leaderboard']);
         });
     });
 });
