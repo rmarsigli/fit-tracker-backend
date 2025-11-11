@@ -23,5 +23,5 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
-# My personal sprint generator, code reviwer/testing agents
+# .claude/ folder - Sprint tracking and project management
 .claude/

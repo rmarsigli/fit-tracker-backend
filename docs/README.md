@@ -4,20 +4,67 @@ Welcome to the technical documentation of **FitTrack BR**, an advanced fitness a
 
 ---
 
+## 🗂️ Documentation Structure
+
+```
+docs/
+├── README.md                          # This file (main index)
+├── architecture/                      # Architecture and technical decisions
+│   ├── decisions/                     # Architecture Decision Records (ADRs) - New decisions
+│   ├── data-classes-decision.md       # Why we use Spatie Data + ValueObjects
+│   └── overview.md                    # Architecture overview
+├── implementation/                    # Sprints and implementations
+│   ├── 2025-11-10-sprint-summary.md  # Optimization sprint (NEW)
+│   └── status.md                      # Current task status (NEW)
+├── guides/                            # Practical guides
+│   ├── onboarding.md                  # How to get started
+│   ├── deployment.md                  # How to deploy
+│   ├── testing.md                     # How to run and create tests
+│   └── performance.md                 # How to optimize queries
+└── changelog/                         # Change history
+    └── 2025-11.md                     # Changes from November/2025
+```
+
+---
+
+## 🚀 Quick Start
+
+### For New Developers
+1. 📖 Read [Onboarding Guide](guides/onboarding.md)
+2. 🏛️ Understand the [Architecture](architecture/data-classes-decision.md)
+3. 📋 Review [Architectural Decisions](architecture/decisions/README.md)
+4. 🔧 Configure following [CLAUDE.md](../CLAUDE.md)
+
+### For Code Review
+1. 🔍 Consult [relevant ADRs](architecture/decisions/README.md)
+2. 📊 Check [Implementation Status](implementation/status.md)
+3. 📝 Review old decisions in [.claude/decisions.md](../.claude/decisions.md)
+
+### For Deployment
+1. 🚢 Follow [Deploy Guide](guides/deployment.md)
+2. ✅ Validate [Deploy Checklist](guides/deployment.md#checklist)
+
+---
+
 ## 📑 Documentation Index
 
 ### 🏗️ Architecture
 
+#### Core Architecture Decisions
 - **[Why We Use Spatie Data + ValueObjects](./architecture/data-classes-decision.md)** ⭐
   - Complete architectural decision
   - Detailed comparison: Form Requests vs Data Classes
   - Real project examples
   - FAQ and implementation strategy
 
-### 📋 Architectural Decision Records (ADRs)
+- **[Architecture Overview](./architecture/overview.md)**
+  - Complete technology stack
+  - Directory structure
+  - Design patterns used
 
-All important decisions are documented in `.claude/decisions.md`:
+#### Architecture Decision Records (ADRs)
 
+**Historical Decisions** (in `.claude/decisions.md`):
 - **ADR-001**: PostGIS Native vs Packages
 - **ADR-002**: Real-time Tracking with Redis
 - **ADR-003**: API Versioning Strategy
@@ -26,6 +73,18 @@ All important decisions are documented in `.claude/decisions.md`:
 - **ADR-006**: Testing with Pest 4
 - **ADR-007**: Segment Detection Strategy
 - **ADR-009**: Data Classes & ValueObjects Architecture
+
+**Recent Decisions** (Sprint 2025-11-10) in `architecture/decisions/`:
+- **[ADR-001](architecture/decisions/ADR-001-skip-scribe.md)**: Why NOT implement Scribe API Docs
+- **[ADR-002](architecture/decisions/ADR-002-skip-integration-tests.md)**: Why NOT implement Integration Tests
+- **[ADR-003](architecture/decisions/ADR-003-skip-performance-tests.md)**: Use Telescope instead of Performance Tests
+- **[ADR-004](architecture/decisions/ADR-004-skip-repository-pattern.md)**: Why NOT use Repository Pattern ⭐
+- **[ADR-005](architecture/decisions/ADR-005-keep-raw-sql.md)**: Why KEEP Raw SQL ⭐
+- **[ADR-006](architecture/decisions/ADR-006-implement-cache-leaderboards.md)**: Cache in Leaderboards (40x faster) ⭐
+- **[ADR-007](architecture/decisions/ADR-007-implement-cursor-pagination.md)**: Cursor Pagination
+- **[ADR-008](architecture/decisions/ADR-008-implement-covering-indexes.md)**: Covering Indexes
+
+See [complete ADR index](architecture/decisions/README.md)
 
 ### 🚀 Development Guides
 

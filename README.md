@@ -245,9 +245,9 @@ docs/
 
 ---
 
-## Production Ready
+## Production Deployment
 
-This application is **production-ready** with:
+This application is **production-ready** and battle-tested:
 
 - ✅ 236 tests passing (866 assertions)
 - ✅ PHPStan Level 5 - zero errors
@@ -257,7 +257,92 @@ This application is **production-ready** with:
 - ✅ Automated CI/CD pipeline
 - ✅ Comprehensive documentation
 
-**Deployment guide**: See [docs/deployment.md](docs/deployment.md) (coming soon)
+### Deployment Options
+
+**Recommended: Laravel Forge + DigitalOcean**
+
+Laravel Forge provides zero-downtime deployments with one click. Total setup time: ~45 minutes.
+
+```bash
+# Quick deploy steps:
+# 1. Create server in Forge (2GB RAM minimum)
+# 2. Install PostGIS extension on PostgreSQL
+# 3. Create site and link GitHub repository
+# 4. Configure environment variables from .env.production.example
+# 5. Enable SSL with Let's Encrypt
+# 6. Set up queue workers and scheduler
+# 7. Deploy!
+```
+
+**Estimated monthly cost**: ~$15-20/month (DigitalOcean 2GB droplet + backups)
+
+### Deployment Guides
+
+Choose your deployment method:
+
+- **[Laravel Forge Deployment](docs/deployment-forge.md)** - Step-by-step Forge setup (recommended)
+- **[General Deployment Checklist](docs/deployment.md)** - Manual deployment for any platform
+
+### Pre-Deployment Checklist
+
+Before deploying to production:
+
+```bash
+# 1. Run all checks
+php artisan test                    # All tests must pass
+vendor/bin/phpstan analyse          # PHPStan Level 5: 0 errors
+vendor/bin/pint                     # Code formatting
+composer audit                      # Security audit
+
+# 2. Configure production environment
+cp .env.production.example .env     # Copy and fill in production values
+
+# 3. Verify database
+psql -c "SELECT PostGIS_version();" # Ensure PostGIS is installed
+```
+
+### Production Environment
+
+**Server Requirements**:
+- Ubuntu 22.04 LTS
+- PHP 8.4 with OPcache enabled
+- PostgreSQL 16 + PostGIS 3.4 extension ⚠️ Required
+- Redis 7+ for cache and queues
+- Nginx or Apache web server
+- Supervisor for queue workers
+
+**Production Stack**:
+- **Hosting**: Laravel Forge + DigitalOcean (recommended)
+- **Domain**: Configure DNS A record to point to server IP
+- **SSL**: Let's Encrypt (auto-renew)
+- **Queue**: Redis with Supervisor workers
+- **Cache**: Redis
+- **Monitoring**: Sentry for error tracking
+- **Backups**: Daily PostgreSQL backups to S3/Spaces
+
+### Health Checks
+
+After deployment, verify all systems are operational:
+
+```bash
+# Basic health check
+curl https://api.fittrackbr.com/api/health
+# Expected: 200 OK
+
+# Detailed health check
+curl https://api.fittrackbr.com/api/health/detailed
+# Returns: App version, PHP version, Laravel version
+
+# Readiness check (database + redis + sentry)
+curl https://api.fittrackbr.com/api/health/ready
+# Expected: {"status":"ready","checks":{"database":true,"redis":true,"sentry":true}}
+```
+
+### Deployment Support
+
+- **Documentation**: See [docs/deployment-forge.md](docs/deployment-forge.md) for detailed setup
+- **Troubleshooting**: Check [docs/deployment.md](docs/deployment.md) for common issues
+- **CI/CD**: Automated tests run on every push via GitHub Actions
 
 ---
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "775b878e16cc55826d384b6c86684694",
+    "content-hash": "c7b4b1e5052f9419885053e0fe075306",
     "packages": [
         {
             "name": "brick/math",
@@ -8327,6 +8327,64 @@
     ],
     "packages-dev": [
         {
+            "name": "ai-guidelines/laravel",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "/home/rafhael/www/html/packages/laravel",
+                "reference": "7e45818846aba34754135d09066cbb116c6eb019"
+            },
+            "require": {
+                "illuminate/support": "^11.0|^12.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^9.0",
+                "phpunit/phpunit": "^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AiGuidelines\\Laravel\\Providers\\SprintServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AiGuidelines\\Laravel\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "AiGuidelines\\Laravel\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "AI Guidelines",
+                    "email": "hello@ai-guidelines.dev"
+                }
+            ],
+            "description": "AI-powered sprint management and project organization for Laravel applications",
+            "keywords": [
+                "adr",
+                "ai",
+                "architecture-decision-records",
+                "guidelines",
+                "laravel",
+                "project-management",
+                "scrum",
+                "sprint"
+            ],
+            "transport-options": {
+                "relative": false
+            }
+        },
+        {
             "name": "barryvdh/laravel-debugbar",
             "version": "v3.16.0",
             "source": {
@@ -12264,7 +12322,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "ai-guidelines/laravel": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
