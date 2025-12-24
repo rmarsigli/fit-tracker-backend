@@ -23,7 +23,6 @@
         "spatie/laravel-query-builder": "^6.3"
     },
     "require-dev": {
-        "ai-guidelines/laravel": "@dev",
         "barryvdh/laravel-debugbar": "*",
         "fakerphp/faker": "^1.23",
         "knuckleswtf/scribe": "^5.5",
@@ -105,11 +104,5 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "repositories": {
-        "ai-guidelines-laravel": {
-            "type": "path",
-            "url": "/home/rafhael/www/html/packages/laravel"
-        }
-    }
+    "prefer-stable": true
 }
